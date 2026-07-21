@@ -1,6 +1,6 @@
 -- ============================================================
 -- Kimwanyi SACCO Management System — Database Schema
--- Engine: MySQL 8.x  (InnoDB, for FK + transaction support)
+-
 -- ============================================================
 
 CREATE DATABASE IF NOT EXISTS kimwanyi_sacco
@@ -16,7 +16,7 @@ USE kimwanyi_sacco;
 CREATE TABLE members (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     national_id          VARCHAR(30)  NOT NULL UNIQUE,
-    membership_number    VARCHAR(20)  NOT NULL UNIQUE,
+    
     full_name             VARCHAR(120) NOT NULL,
     phone_number           VARCHAR(20),
     email                   VARCHAR(120),
@@ -34,7 +34,7 @@ CREATE TABLE members (
 -- Rule: admin accounts are structurally separate from members
 -- (own table, own login, no FK to members).
 -- ------------------------------------------------------------
-CREATE TABLE admins (
+CREATE TABLE admin (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     username             VARCHAR(60)  NOT NULL UNIQUE,
     full_name             VARCHAR(120) NOT NULL,
@@ -110,7 +110,7 @@ CREATE TABLE loan_applications (
     CONSTRAINT fk_application_member
         FOREIGN KEY (member_id) REFERENCES members(id),
     CONSTRAINT fk_application_reviewer
-        FOREIGN KEY (reviewed_by) REFERENCES admins(id),
+        FOREIGN KEY (reviewed_by) REFERENCES admin(id),
     CONSTRAINT chk_application_status
         CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED')),
     CONSTRAINT chk_application_amount_positive
@@ -150,7 +150,7 @@ CREATE TABLE loans (
     CONSTRAINT fk_loan_member
         FOREIGN KEY (member_id) REFERENCES members(id),
     CONSTRAINT fk_loan_approver
-        FOREIGN KEY (approved_by) REFERENCES admins(id),
+        FOREIGN KEY (approved_by) REFERENCES admin(id),
     CONSTRAINT chk_loan_status
         CHECK (status IN ('ACTIVE', 'REPAID')),
     CONSTRAINT chk_loan_principal_positive
