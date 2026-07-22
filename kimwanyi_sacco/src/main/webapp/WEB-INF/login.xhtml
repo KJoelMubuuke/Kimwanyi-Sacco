@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Kimwanyi SACCO — Login</title>
+</h:head>
+<h:body>
+    <h2>Kimwanyi SACCO Login</h2>
+    <h:messages showDetail="true" style="color:red;" />
+    <h:form>
+        <table>
+            <tr>
+                <td><h:outputLabel for="identifier" value="Username or Email:" /></td>
+                <td><h:inputText id="identifier" value="#{loginBean.identifier}" required="true" /></td>
+            </tr>
+            <tr>
+                <td><h:outputLabel for="password" value="Password:" /></td>
+                <td><h:inputSecret id="password" value="#{loginBean.password}" required="true" /></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <h:commandButton value="Log in" action="#{loginBean.login}" />
+                </td>
+            </tr>
+        </table>
+    </h:form>
+</h:body>
+</html>
