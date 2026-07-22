@@ -6,6 +6,10 @@ import org.pahappa.kimwanyi.model.Transaction;
 import org.pahappa.kimwanyi.util.HibernateUtil;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.List;
 
 /**
  * Deposit and withdrawal logic for a member's savings account.
@@ -26,6 +30,7 @@ import java.math.BigDecimal;
 public class AccountService {
 
     private static final BigDecimal MINIMUM_BALANCE = new BigDecimal("20000.00");
+    private static final BigDecimal ANNUAL_INTEREST_RATE = new BigDecimal("0.05");
 
     /**
      * @throws IllegalArgumentException if amount is not positive
@@ -51,10 +56,6 @@ public class AccountService {
 
             BigDecimal newBalance = account.getBalance().add(amount);
             account.setBalance(newBalance);
-            // account.getVersion() is bumped automatically by Hibernate on
-            // this UPDATE via @Version - if another transaction changed
-            // this same row since it was read, this commit throws
-            // OptimisticLockException instead of silently overwriting it.
             session.merge(account);
 
             Transaction transaction = new Transaction();
@@ -134,5 +135,77 @@ public class AccountService {
             }
             return account.getBalance();
         }
+    }
+
+    /**
+     * Savings interest per the brief: "5% per annum applied monthly."
+     * LIMITATION: the schema has no column tracking when interest was last
+     * posted, so this checks the transactions table for an existing interest
+     * posting this calendar month as a workaround, not a schema-level guarantee.
+     *
+     * @throws IllegalStateException if no account exists, or interest was
+     *         already posted to it this month
+     */
+    public Transaction applyMonthlyInterest(Long memberId) {
+        org.hibernate.Transaction tx = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            tx = session.beginTransaction();
+
+            SavingsAccount account = session.createQuery(
+                            "FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+                    .setParameter("memberId", memberId)
+                    .uniqueResult();
+            if (account == null) {
+                throw new IllegalStateException("No savings account found for member " + memberId);
+            }
+
+            YearMonth thisMonth = YearMonth.now();
+            LocalDateTime monthStart = thisMonth.atDay(1).atStartOfDay();
+            LocalDateTime monthEnd = thisMonth.plusMonths(1).atDay(1).atStartOfDay();
+            String interestDescription = "Monthly savings interest";
+
+            Long alreadyPosted = session.createQuery(
+                            "SELECT COUNT(t) FROM Transaction t WHERE t.savingsAccount.id = :accountId " +
+                                    "AND t.description = :desc AND t.createdAt >= :start AND t.createdAt < :end",
+                            Long.class)
+                    .setParameter("accountId", account.getId())
+                    .setParameter("desc", interestDescription)
+                    .setParameter("start", monthStart)
+                    .setParameter("end", monthEnd)
+                    .uniqueResult();
+            if (alreadyPosted != null && alreadyPosted > 0) {
+                throw new IllegalStateException("Interest already posted for " + thisMonth);
+            }
+
+            BigDecimal monthlyRate = ANNUAL_INTEREST_RATE.divide(new BigDecimal("12"), 10, RoundingMode.HALF_UP);
+            BigDecimal interestAmount = account.getBalance().multiply(monthlyRate).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal newBalance = account.getBalance().add(interestAmount);
+
+            account.setBalance(newBalance);
+            session.merge(account);
+
+            Transaction interestTxn = new Transaction();
+            interestTxn.setSavingsAccount(account);
+            interestTxn.setType("DEPOSIT");
+            interestTxn.setAmount(interestAmount);
+            interestTxn.setBalanceAfter(newBalance);
+            interestTxn.setDescription(interestDescription);
+            session.persist(interestTxn);
+
+            tx.commit();
+            return interestTxn;
+
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            throw e;
+        }
+    }
+
+    /**
+     * Account statement: full transaction history for a member, newest first.
+     * Reuses TransactionDAO's existing query rather than duplicating it.
+     */
+    public List<Transaction> getStatement(Long memberId) {
+        return new org.pahappa.kimwanyi.dao.TransactionDAO().findByMemberId(memberId);
     }
 }
