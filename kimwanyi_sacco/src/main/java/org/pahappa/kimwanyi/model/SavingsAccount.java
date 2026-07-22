@@ -1,5 +1,5 @@
 package org.pahappa.kimwanyi.model;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
