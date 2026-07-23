@@ -167,17 +167,5 @@ kimwanyi_sacco/
 └── pom.xml
 ```
 
----
 
-## Deliverables Checklist
 
-- [x] Full source code
-- [x] Working JSF web application (WAR)
-- [x] README with setup instructions
-- [x] Database schema (`database/schema.sql`)
-- [x] Member registration, login, profile
-- [x] Savings: deposit, withdraw, balance, statement
-- [x] Loans: apply, approve/reject, repay, status
-- [x] Interest calculation (5% p.a. savings, 10% flat loan)
-- [x] Admin dashboard with summary counts and totals
-- [x] Role-based access control (AuthFilter)
