@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Kimwanyi SACCO — Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body styleClass="auth-page">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <p>Community Savings &amp; Credit Cooperative</p>
+        </div>
+        <h2>Sign In to Your Account</h2>
+
+        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                    infoClass="sacco-msg info" warnClass="sacco-msg warn" showDetail="true"/>
+
+        <h:form id="loginForm">
+            <div class="form-group">
+                <h:outputLabel for="identifier" value="National ID / Email / Admin Username"/>
+                <h:inputText id="identifier" value="#{loginBean.identifier}"
+                             required="true" requiredMessage="Please enter your National ID or email."
+                             placeholder="e.g. CM9000123456HKWF or name@email.com"/>
+            </div>
+            <div class="form-group">
+                <h:outputLabel for="password" value="Password"/>
+                <h:inputSecret id="password" value="#{loginBean.password}"
+                               required="true" requiredMessage="Password is required."
+                               placeholder="••••••••"/>
+            </div>
+            <h:commandButton id="loginBtn" value="Sign In" action="#{loginBean.login}"
+                             styleClass="btn btn-primary btn-full" style="margin-top:8px;"/>
+        </h:form>
+
+        <div class="auth-footer">
+            New member? <h:link value="Create an account" outcome="/register.xhtml"/>
+        </div>
+    </div>
+</h:body>
+</html>

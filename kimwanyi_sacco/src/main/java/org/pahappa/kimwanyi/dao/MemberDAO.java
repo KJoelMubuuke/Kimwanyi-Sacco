@@ -29,7 +29,7 @@ public class MemberDAO {
 
     public Member findByEmail(String email) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Member WHERE email = :email", Member.class)
+            return session.createQuery("FROM Member m WHERE m.email = :email", Member.class)
                     .setParameter("email", email)
                     .uniqueResult();
         }
@@ -37,8 +37,16 @@ public class MemberDAO {
 
     public Member findByNationalId(String nationalId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Member WHERE nationalId = :nid", Member.class)
+            return session.createQuery("FROM Member m WHERE m.nationalId = :nid", Member.class)
                     .setParameter("nid", nationalId)
+                    .uniqueResult();
+        }
+    }
+
+    public Member findByMembershipNumber(String membershipNumber) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Member m WHERE m.membershipNumber = :mno", Member.class)
+                    .setParameter("mno", membershipNumber)
                     .uniqueResult();
         }
     }

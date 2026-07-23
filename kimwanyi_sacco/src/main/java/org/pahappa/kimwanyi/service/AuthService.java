@@ -7,11 +7,15 @@ import org.pahappa.kimwanyi.model.Admin;
 import org.pahappa.kimwanyi.model.Member;
 
 /**
- * Login for both roles through one entry point, since there's no shared
- * users table. Admins log in with username, members log in with email -
- * the single "identifier" field is checked against admins first, then
- * members, exactly as discussed: two separate lookups, not one shared
- * login table.
+ * Login for both roles through one entry point.
+ *
+ * Lookup order:
+ *   1. Admins    → by username
+ *   2. Members   → by membership number (primary identifier per spec)
+ *   3. Members   → by email (fallback, for convenience)
+ *
+ * A member can sign in with either their membership number
+ * or their email address — whichever they remember.
  */
 public class AuthService {
 
@@ -27,12 +31,20 @@ public class AuthService {
             throw new IllegalArgumentException("Identifier and password are required");
         }
 
+        // 1. Try admin by username
         Admin admin = adminDAO.findByUsername(identifier);
         if (admin != null && BCrypt.checkpw(plainPassword, admin.getPasswordHash())) {
             return new AuthResult(AuthResult.Role.ADMIN, admin.getId(), admin.getFullName());
         }
 
-        Member member = memberDAO.findByEmail(identifier);
+        // 2. Try member by National ID (NIN - primary identifier per spec)
+        Member member = memberDAO.findByNationalId(identifier);
+
+        // 3. Fallback: try member by email
+        if (member == null) {
+            member = memberDAO.findByEmail(identifier);
+        }
+
         if (member != null && BCrypt.checkpw(plainPassword, member.getPasswordHash())) {
             if (!"ACTIVE".equals(member.getStatus())) {
                 throw new IllegalArgumentException("This member account has been deactivated");
@@ -40,6 +52,6 @@ public class AuthService {
             return new AuthResult(AuthResult.Role.MEMBER, member.getId(), member.getFullName());
         }
 
-        throw new IllegalArgumentException("Invalid credentials");
+        throw new IllegalArgumentException("Invalid credentials. Use your National ID or email.");
     }
 }

@@ -27,18 +27,39 @@ public class MemberService {
      *         in use (checked here first so the caller gets a clear message
      *         instead of a raw DB unique-constraint exception)
      */
-    public Member register(String nationalId, String membershipNumber, String fullName,
+    public Member register(String nationalId, String fullName,
                            String phoneNumber, String email, String plainPassword) {
 
-        if (nationalId == null || nationalId.isBlank()
-                || membershipNumber == null || membershipNumber.isBlank()
-                || fullName == null || fullName.isBlank()
-                || plainPassword == null || plainPassword.isBlank()) {
-            throw new IllegalArgumentException("National ID, membership number, full name, and password are required");
-        }
+        // --- Field validation (mirrors the JSF validators as a backend safety net) ---
+        if (nationalId == null || !nationalId.matches("[A-Za-z0-9]{14}"))
+            throw new IllegalArgumentException("National ID must be exactly 14 alphanumeric characters.");
+
+        if (fullName == null || !fullName.matches("[A-Za-z ]{2,120}"))
+            throw new IllegalArgumentException("Full name must be 2–120 characters, letters and spaces only.");
+
+        if (phoneNumber != null && !phoneNumber.isBlank()
+                && !phoneNumber.matches("(\\+256|0)[0-9]{9}"))
+            throw new IllegalArgumentException("Phone number must be a valid Uganda number (e.g. 0771234567 or +256771234567).");
+
+        if (email == null || !email.matches("[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}"))
+            throw new IllegalArgumentException("Email address is not valid (e.g. name@example.com).");
+
+        if (plainPassword == null || !plainPassword.matches("(?=.*[A-Za-z])(?=.*[0-9]).{8,}"))
+            throw new IllegalArgumentException("Password must be at least 8 characters and contain both letters and numbers.");
 
         if (memberDAO.findByNationalId(nationalId) != null) {
             throw new IllegalArgumentException("A member with this national ID already exists");
+        }
+
+        // --- Auto-generate unique membership number (e.g., KS-2026-A1B2C) ---
+        String year = String.valueOf(java.time.Year.now().getValue());
+        String generatedMembershipNumber;
+        while (true) {
+            String randomPart = java.util.UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+            generatedMembershipNumber = "KS-" + year + "-" + randomPart;
+            if (memberDAO.findByMembershipNumber(generatedMembershipNumber) == null) {
+                break; // It's unique!
+            }
         }
 
         org.hibernate.Transaction tx = null;
@@ -47,7 +68,7 @@ public class MemberService {
 
             Member member = new Member();
             member.setNationalId(nationalId);
-            member.setMembershipNumber(membershipNumber);
+            member.setMembershipNumber(generatedMembershipNumber);
             member.setFullName(fullName);
             member.setPhoneNumber(phoneNumber);
             member.setEmail(email);
@@ -80,6 +101,18 @@ public class MemberService {
             throw new IllegalStateException("Member not found: " + memberId);
         }
         member.setStatus("DEACTIVATED");
+        memberDAO.update(member);
+    }
+
+    /**
+     * @throws IllegalStateException if the member doesn't exist
+     */
+    public void activate(Long memberId) {
+        Member member = memberDAO.findById(memberId);
+        if (member == null) {
+            throw new IllegalStateException("Member not found: " + memberId);
+        }
+        member.setStatus("ACTIVE");
         memberDAO.update(member);
     }
 

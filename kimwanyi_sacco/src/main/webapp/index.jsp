@@ -1,1 +1,1 @@
-<% response.sendRedirect(request.getContextPath() + "/index.xhtml"); %>
+<% response.sendRedirect(request.getContextPath() + "/login.xhtml"); %>

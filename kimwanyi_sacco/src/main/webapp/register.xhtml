@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Register — Kimwanyi SACCO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body styleClass="auth-page">
+    <div class="auth-card" style="max-width:520px;">
+        <div class="auth-logo">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <p>Member Registration</p>
+        </div>
+        <h2>Create Your Account</h2>
+
+        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                    infoClass="sacco-msg info" showDetail="true"/>
+
+        <h:form id="registerForm">
+
+            <!-- National ID -->
+            <div class="form-group">
+                <h:outputLabel for="nationalId" value="National ID *"/>
+                <h:inputText id="nationalId" value="#{registerBean.nationalId}"
+                             required="true"
+                             requiredMessage="National ID is required."
+                             validatorMessage="National ID must be 14 alphanumeric characters (e.g. CM9000123456HKWF)."
+                             placeholder="e.g. CM9000123456HKWF" maxlength="14">
+                    <f:validateRegex pattern="[A-Za-z0-9]{14}"/>
+                </h:inputText>
+                <h:message for="nationalId" styleClass="field-error"/>
+            </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+                <h:outputLabel for="fullName" value="Full Name *"/>
+                <h:inputText id="fullName" value="#{registerBean.fullName}"
+                             required="true"
+                             requiredMessage="Full name is required."
+                             validatorMessage="Full name must be 2–120 characters, letters and spaces only."
+                             placeholder="e.g. John Doe" maxlength="120">
+                    <f:validateLength minimum="2" maximum="120"/>
+                    <f:validateRegex pattern="[A-Za-z ]{2,120}"/>
+                </h:inputText>
+                <h:message for="fullName" styleClass="field-error"/>
+            </div>
+
+            <!-- Phone Number -->
+            <div class="form-group">
+                <h:outputLabel for="phone" value="Phone Number"/>
+                <h:inputText id="phone" value="#{registerBean.phoneNumber}"
+                             validatorMessage="Enter a valid Uganda phone number (e.g. 0771234567 or +256771234567)."
+                             placeholder="+256771234567 or 0771234567" maxlength="20">
+                    <f:validateRegex pattern="(\+256|0)[0-9]{9}"/>
+                </h:inputText>
+                <h:message for="phone" styleClass="field-error"/>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+                <h:outputLabel for="email" value="Email Address *"/>
+                <h:inputText id="email" value="#{registerBean.email}"
+                             required="true"
+                             requiredMessage="Email address is required."
+                             validatorMessage="Enter a valid email address (e.g. name@example.com)."
+                             placeholder="name@example.com" maxlength="120">
+                    <f:validateRegex pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
+                </h:inputText>
+                <h:message for="email" styleClass="field-error"/>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <h:outputLabel for="pwd" value="Password *"/>
+                <h:inputSecret id="pwd" value="#{registerBean.password}"
+                               required="true"
+                               requiredMessage="Password is required."
+                               validatorMessage="Password must be at least 8 characters and contain letters and numbers."
+                               placeholder="Min. 8 characters" maxlength="72">
+                    <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
+                </h:inputSecret>
+                <h:message for="pwd" styleClass="field-error"/>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+                <h:outputLabel for="confirmPwd" value="Confirm Password *"/>
+                <h:inputSecret id="confirmPwd" value="#{registerBean.confirmPassword}"
+                               required="true"
+                               requiredMessage="Please confirm your password."
+                               placeholder="Repeat password" maxlength="72"/>
+                <h:message for="confirmPwd" styleClass="field-error"/>
+            </div>
+
+            <h:commandButton id="registerBtn" value="Create Account" action="#{registerBean.register}"
+                             styleClass="btn btn-primary btn-full" style="margin-top:6px;"/>
+        </h:form>
+
+        <div class="auth-footer">
+            Already a member? <h:link value="Sign in" outcome="/login.xhtml"/>
+        </div>
+    </div>
+</h:body>
+</html>

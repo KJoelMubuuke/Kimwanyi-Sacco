@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Loan Applications — Kimwanyi SACCO Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Admin Panel</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/admin/dashboard.xhtml">
+                <i class="nav-icon">⊞</i> Dashboard
+            </h:link>
+            <h:link outcome="/admin/members.xhtml">
+                <i class="nav-icon">👥</i> Members
+            </h:link>
+            <h:link outcome="/admin/loans.xhtml" styleClass="active">
+                <i class="nav-icon">📋</i> Loan Applications
+            </h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">Loan Applications</span>
+            <span class="topbar-user">Admin: <h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                        infoClass="sacco-msg info" showDetail="true"/>
+
+            <!-- Pending Applications -->
+            <div class="card mb-4">
+                <div class="card-header">⏳ Pending Loan Applications</div>
+                <div class="table-wrap">
+                    <h:dataTable value="#{adminLoansBean.pendingApplications}" var="app" styleClass="sacco-table">
+                        <h:column>
+                            <f:facet name="header">Application ID</f:facet>
+                            <h:outputText value="#{app.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Member</f:facet>
+                            <h:outputText value="#{app.member.fullName}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Membership No.</f:facet>
+                            <h:outputText value="#{app.member.membershipNumber}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Amount (UGX)</f:facet>
+                            <h:outputText value="#{app.requestedAmount}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Purpose</f:facet>
+                            <h:outputText value="#{app.reason}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Applied On</f:facet>
+                            <h:outputText value="#{app.appliedAt}">
+                                <f:convertDateTime pattern="dd-MMM-yyyy"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Actions</f:facet>
+                            <h:form>
+                                <!-- Approve -->
+                                <h:commandButton value="✓ Approve"
+                                                 action="#{adminLoansBean.approve(app.id)}"
+                                                 styleClass="btn btn-primary btn-sm"
+                                                 onclick="return confirm('Approve this loan for UGX ' + '#{app.requestedAmount}' + '?');"/>
+                            </h:form>
+                            <h:form style="margin-top:6px;">
+                                <h:inputHidden id="appId" value="#{app.id}"/>
+                                <div class="form-group" style="margin-bottom:6px;">
+                                    <h:inputText value="#{adminLoansBean.rejectionReason}"
+                                                 placeholder="Reason for rejection"/>
+                                </div>
+                                <h:commandButton value="✗ Reject"
+                                                 styleClass="btn btn-danger btn-sm"
+                                                 action="#{adminLoansBean.reject}">
+                                    <f:setPropertyActionListener target="#{adminLoansBean.selectedApplicationId}"
+                                                                 value="#{app.id}"/>
+                                </h:commandButton>
+                            </h:form>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+
+            <!-- All Loans -->
+            <div class="card">
+                <div class="card-header">All Active and Completed Loans</div>
+                <div class="table-wrap">
+                    <h:dataTable value="#{adminLoansBean.allLoans}" var="loan" styleClass="sacco-table">
+                        <h:column>
+                            <f:facet name="header">Loan ID</f:facet>
+                            <h:outputText value="#{loan.id}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Member</f:facet>
+                            <h:outputText value="#{loan.member.fullName}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Principal (UGX)</f:facet>
+                            <h:outputText value="#{loan.principal}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Interest (UGX)</f:facet>
+                            <h:outputText value="#{loan.interestAmount}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Total Repayable (UGX)</f:facet>
+                            <h:outputText value="#{loan.totalRepayable}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Remaining (UGX)</f:facet>
+                            <h:outputText value="#{loan.remainingBalance}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                            </h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Status</f:facet>
+                            <h:outputText value="ACTIVE"  styleClass="badge badge-success" rendered="#{loan.status == 'ACTIVE'}"/>
+                            <h:outputText value="REPAID"  styleClass="badge badge-muted"   rendered="#{loan.status == 'REPAID'}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Approved On</f:facet>
+                            <h:outputText value="#{loan.approvedAt}">
+                                <f:convertDateTime pattern="dd-MMM-yyyy"/>
+                            </h:outputText>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</h:body>
+</html>

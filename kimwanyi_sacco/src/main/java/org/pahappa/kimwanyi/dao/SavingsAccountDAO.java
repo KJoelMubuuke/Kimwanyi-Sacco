@@ -23,7 +23,7 @@ public class SavingsAccountDAO {
     }
     public SavingsAccount findByMemberId(Long memberId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+            return session.createQuery("FROM SavingsAccount s WHERE s.member.id = :memberId", SavingsAccount.class)
                     .setParameter("memberId", memberId)
                     .uniqueResult();
         }

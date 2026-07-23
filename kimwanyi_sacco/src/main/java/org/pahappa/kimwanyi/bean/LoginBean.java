@@ -13,8 +13,6 @@ import java.io.Serializable;
 @SessionScoped
 public class LoginBean implements Serializable {
 
-    private final transient AuthService authService = new AuthService();
-
     private String identifier;
     private String password;
 
@@ -28,6 +26,7 @@ public class LoginBean implements Serializable {
      */
     public String login() {
         try {
+            AuthService authService = new AuthService();
             currentUser = authService.login(identifier, password);
             password = null; // never keep the plaintext around
 

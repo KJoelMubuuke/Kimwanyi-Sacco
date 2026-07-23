@@ -22,7 +22,7 @@ public class TransactionDAO {
 
     public List<Transaction> findByAccountId(Long accountId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Transaction WHERE savingsAccount.id = :accountId ORDER BY createdAt DESC", Transaction.class)
+            return session.createQuery("FROM Transaction t WHERE t.savingsAccount.id = :accountId ORDER BY t.createdAt DESC", Transaction.class)
                     .setParameter("accountId", accountId)
                     .list();
         }
@@ -30,7 +30,7 @@ public class TransactionDAO {
 
     public List<Transaction> findByMemberId(Long memberId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Transaction WHERE savingsAccount.member.id = :memberId ORDER BY createdAt DESC", Transaction.class)
+            return session.createQuery("FROM Transaction t WHERE t.savingsAccount.member.id = :memberId ORDER BY t.createdAt DESC", Transaction.class)
                     .setParameter("memberId", memberId)
                     .list();
         }
