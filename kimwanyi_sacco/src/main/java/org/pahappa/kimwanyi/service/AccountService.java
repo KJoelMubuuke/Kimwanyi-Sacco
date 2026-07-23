@@ -46,7 +46,7 @@ public class AccountService {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
-                            "FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+                            "FROM SavingsAccount s WHERE s.member.id = :memberId", SavingsAccount.class)
                     .setParameter("memberId", memberId)
                     .uniqueResult();
 
@@ -90,7 +90,7 @@ public class AccountService {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
-                            "FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+                            "FROM SavingsAccount s WHERE s.member.id = :memberId", SavingsAccount.class)
                     .setParameter("memberId", memberId)
                     .uniqueResult();
 
@@ -127,7 +127,7 @@ public class AccountService {
     public BigDecimal getBalance(Long memberId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             SavingsAccount account = session.createQuery(
-                            "FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+                            "FROM SavingsAccount s WHERE s.member.id = :memberId", SavingsAccount.class)
                     .setParameter("memberId", memberId)
                     .uniqueResult();
             if (account == null) {
@@ -152,7 +152,7 @@ public class AccountService {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
-                            "FROM SavingsAccount WHERE member.id = :memberId", SavingsAccount.class)
+                            "FROM SavingsAccount s WHERE s.member.id = :memberId", SavingsAccount.class)
                     .setParameter("memberId", memberId)
                     .uniqueResult();
             if (account == null) {
