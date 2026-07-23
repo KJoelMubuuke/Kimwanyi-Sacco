@@ -29,7 +29,7 @@ public class LoanApplicationDAO {
 
     public List<LoanApplication> findByMemberId(Long memberId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM LoanApplication WHERE member.id = :memberId ORDER BY appliedAt DESC", LoanApplication.class)
+            return session.createQuery("FROM LoanApplication l WHERE l.member.id = :memberId ORDER BY l.appliedAt DESC", LoanApplication.class)
                     .setParameter("memberId", memberId)
                     .list();
         }
@@ -37,7 +37,7 @@ public class LoanApplicationDAO {
 
     public List<LoanApplication> findPending() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM LoanApplication WHERE status = 'PENDING' ORDER BY appliedAt ASC", LoanApplication.class)
+            return session.createQuery("FROM LoanApplication l WHERE l.status = 'PENDING' ORDER BY l.appliedAt ASC", LoanApplication.class)
                     .list();
         }
     }
