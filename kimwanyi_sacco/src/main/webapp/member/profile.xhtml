@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>My Profile — Kimwanyi SACCO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Member Portal</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/member/dashboard.xhtml"><i class="nav-icon">⊞</i> Dashboard</h:link>
+            <h:link outcome="/member/savings.xhtml"><i class="nav-icon">💰</i> Savings</h:link>
+            <h:link outcome="/member/loans.xhtml"><i class="nav-icon">📋</i> Loans</h:link>
+            <h:link outcome="/member/profile.xhtml" styleClass="active"><i class="nav-icon">👤</i> My Profile</h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">My Profile</span>
+            <span class="topbar-user"><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                        infoClass="sacco-msg info" showDetail="true"/>
+
+            <div class="grid-2">
+                <!-- Account Info (read-only) -->
+                <div class="card">
+                    <div class="card-header">🪪 Account Information</div>
+                    <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:10px 0; color:var(--text-muted); width:45%;">Membership No.</td>
+                            <td style="padding:10px 0; font-weight:600;"><h:outputText value="#{profileBean.membershipNumber}"/></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid var(--border);">
+                            <td style="padding:10px 0; color:var(--text-muted);">National ID</td>
+                            <td style="padding:10px 0; font-weight:600;"><h:outputText value="#{profileBean.nationalId}"/></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 0; color:var(--text-muted);">Account Status</td>
+                            <td style="padding:10px 0;"><span class="badge badge-success"><h:outputText value="#{profileBean.status}"/></span></td>
+                        </tr>
+                    </table>
+                    <p class="text-muted mt-4" style="font-size:.78rem;">
+                        Membership number and National ID cannot be changed. Contact admin if corrections are needed.
+                    </p>
+                </div>
+
+                <!-- Edit Profile -->
+                <div class="card">
+                    <div class="card-header">✏️ Edit Personal Details</div>
+                    <h:form id="profileForm">
+                        <div class="form-group">
+                            <h:outputLabel for="pFullName" value="Full Name *"/>
+                            <h:inputText id="pFullName" value="#{profileBean.fullName}"
+                                         required="true"
+                                         requiredMessage="Full name is required."
+                                         validatorMessage="Full name must be 2–120 characters, letters and spaces only."
+                                         maxlength="120">
+                                <f:validateLength minimum="2" maximum="120"/>
+                                <f:validateRegex pattern="[A-Za-z ]{2,120}"/>
+                            </h:inputText>
+                            <h:message for="pFullName" styleClass="field-error"/>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel for="pPhone" value="Phone Number"/>
+                            <h:inputText id="pPhone" value="#{profileBean.phoneNumber}"
+                                         validatorMessage="Enter a valid Uganda phone number (e.g. 0771234567 or +256771234567)."
+                                         placeholder="+256771234567 or 0771234567" maxlength="20">
+                                <f:validateRegex pattern="(\+256|0)[0-9]{9}"/>
+                            </h:inputText>
+                            <h:message for="pPhone" styleClass="field-error"/>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel for="pEmail" value="Email Address"/>
+                            <h:inputText id="pEmail" value="#{profileBean.email}"
+                                         validatorMessage="Enter a valid email address (e.g. name@example.com)."
+                                         placeholder="name@example.com" maxlength="120">
+                                <f:validateRegex pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
+                            </h:inputText>
+                            <h:message for="pEmail" styleClass="field-error"/>
+                        </div>
+                        <h:commandButton id="saveProfileBtn" value="Save Changes"
+                                         action="#{profileBean.saveProfile}"
+                                         styleClass="btn btn-primary btn-full"/>
+                    </h:form>
+                </div>
+            </div>
+
+            <!-- Change Password -->
+            <div class="card mt-8" style="max-width:500px;">
+                <div class="card-header">🔒 Change Password</div>
+                <h:form id="passwordForm">
+                    <div class="form-group">
+                        <h:outputLabel for="curPwd" value="Current Password *"/>
+                        <h:inputSecret id="curPwd" value="#{profileBean.currentPassword}"
+                                       required="true"
+                                       requiredMessage="Enter your current password."
+                                       placeholder="Your current password" maxlength="72"/>
+                        <h:message for="curPwd" styleClass="field-error"/>
+                    </div>
+                    <div class="form-group">
+                        <h:outputLabel for="newPwd" value="New Password *"/>
+                        <h:inputSecret id="newPwd" value="#{profileBean.newPassword}"
+                                       required="true"
+                                       requiredMessage="Enter a new password."
+                                       validatorMessage="Password must be at least 8 characters and contain both letters and numbers."
+                                       placeholder="Min. 8 characters, letters + numbers" maxlength="72">
+                            <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
+                        </h:inputSecret>
+                        <h:message for="newPwd" styleClass="field-error"/>
+                        <span class="field-hint">At least 8 characters, must include letters and numbers.</span>
+                    </div>
+                    <div class="form-group">
+                        <h:outputLabel for="confirmPwd" value="Confirm New Password *"/>
+                        <h:inputSecret id="confirmPwd" value="#{profileBean.confirmNewPassword}"
+                                       required="true"
+                                       requiredMessage="Please confirm your new password."
+                                       placeholder="Repeat new password" maxlength="72"/>
+                        <h:message for="confirmPwd" styleClass="field-error"/>
+                    </div>
+                    <h:commandButton id="changePwdBtn" value="Change Password"
+                                     action="#{profileBean.changePassword}"
+                                     styleClass="btn btn-outline btn-full"/>
+                </h:form>
+            </div>
+        </div>
+    </div>
+</div>
+</h:body>
+</html>
