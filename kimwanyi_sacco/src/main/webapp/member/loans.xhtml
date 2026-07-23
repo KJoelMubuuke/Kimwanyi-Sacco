@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Loans — Kimwanyi SACCO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Member Portal</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/member/dashboard.xhtml"><i class="nav-icon">⊞</i> Dashboard</h:link>
+            <h:link outcome="/member/savings.xhtml"><i class="nav-icon">💰</i> Savings</h:link>
+            <h:link outcome="/member/loans.xhtml" styleClass="active"><i class="nav-icon">📋</i> Loans</h:link>
+            <h:link outcome="/member/profile.xhtml"><i class="nav-icon">👤</i> My Profile</h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">Loans</span>
+            <span class="topbar-user"><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                        infoClass="sacco-msg info" warnClass="sacco-msg warn" showDetail="true"/>
+
+            <div class="grid-2">
+                <!-- Apply for Loan -->
+                <div class="card">
+                    <div class="card-header">📋 Apply for a Loan</div>
+                    <p class="text-muted mb-4">Maximum: 3× your savings balance. Flat interest: 10%.
+                        You must have no active loan or pending application.</p>
+                    <h:form id="applyForm">
+                        <div class="form-group">
+                            <h:outputLabel for="loanAmt" value="Requested Amount (UGX) *"/>
+                            <h:inputText id="loanAmt" value="#{loanBean.requestedAmount}"
+                                         required="true"
+                                         requiredMessage="Enter the loan amount."
+                                         converterMessage="Amount must be a number (e.g. 150000)."
+                                         validatorMessage="Minimum loan amount is UGX 10,000."
+                                         placeholder="e.g. 150000">
+                                <f:convertNumber/>
+                                <f:validateDoubleRange minimum="10000"/>
+                            </h:inputText>
+                            <h:message for="loanAmt" styleClass="field-error"/>
+                            <span class="field-hint">Minimum: UGX 10,000. Maximum: 3× your savings balance.</span>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel for="loanReason" value="Purpose / Reason *"/>
+                            <h:inputTextarea id="loanReason" value="#{loanBean.reason}"
+                                             required="true"
+                                             requiredMessage="Please state the purpose of the loan."
+                                             validatorMessage="Reason must be between 10 and 255 characters."
+                                             placeholder="Describe clearly how the loan will be used (min. 10 characters)">
+                                <f:validateLength minimum="10" maximum="255"/>
+                            </h:inputTextarea>
+                            <h:message for="loanReason" styleClass="field-error"/>
+                        </div>
+                        <h:commandButton id="applyBtn" value="Submit Application" action="#{loanBean.applyForLoan}"
+                                         styleClass="btn btn-primary btn-full"/>
+                    </h:form>
+                </div>
+
+                <!-- Repay Active Loan -->
+                <div class="card">
+                    <div class="card-header">💳 Repay Active Loan</div>
+                    <h:panelGroup rendered="#{loanBean.myActiveLoan != null}">
+                        <div class="stats-grid" style="grid-template-columns:1fr 1fr; margin-bottom:16px;">
+                            <div class="stat-card">
+                                <span class="stat-label">Principal</span>
+                                <div class="stat-value money">UGX
+                                    <h:outputText value="#{loanBean.myActiveLoan.principal}">
+                                        <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                            <div class="stat-card danger">
+                                <span class="stat-label">Remaining Balance</span>
+                                <div class="stat-value money">UGX
+                                    <h:outputText value="#{loanBean.myActiveLoan.remainingBalance}">
+                                        <f:convertNumber groupingUsed="true" minFractionDigits="0"/>
+                                    </h:outputText>
+                                </div>
+                            </div>
+                        </div>
+                        <h:form id="repayForm">
+                            <div class="form-group">
+                                <h:outputLabel for="repayAmt" value="Repayment Amount (UGX) *"/>
+                                <h:inputText id="repayAmt" value="#{loanBean.repayAmount}"
+                                             required="true"
+                                             requiredMessage="Enter the repayment amount."
+                                             converterMessage="Amount must be a number (e.g. 55000)."
+                                             validatorMessage="Minimum repayment is UGX 1,000."
+                                             placeholder="e.g. 55000">
+                                    <f:convertNumber/>
+                                    <f:validateDoubleRange minimum="1000"/>
+                                </h:inputText>
+                                <h:message for="repayAmt" styleClass="field-error"/>
+                                <span class="field-hint">Cannot exceed remaining balance.</span>
+                            </div>
+                            <h:commandButton id="repayBtn" value="Make Repayment" action="#{loanBean.repayLoan}"
+                                             styleClass="btn btn-primary btn-full"/>
+                        </h:form>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{loanBean.myActiveLoan == null}">
+                        <div class="empty-state"><p>✅ You have no active loan at this time.</p></div>
+                    </h:panelGroup>
+                </div>
+            </div>
+
+            <!-- Loan History -->
+            <div class="card mt-8">
+                <div class="card-header">Loan Application History</div>
+                <div class="table-wrap">
+                    <h:dataTable value="#{loanBean.myApplications}" var="app" styleClass="sacco-table">
+                        <h:column>
+                            <f:facet name="header">Date Applied</f:facet>
+                            <h:outputText value="#{app.appliedAt}"><f:convertDateTime pattern="dd-MMM-yyyy"/></h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Amount (UGX)</f:facet>
+                            <h:outputText value="#{app.requestedAmount}"><f:convertNumber groupingUsed="true" minFractionDigits="0"/></h:outputText>
+                        </h:column>
+                        <h:column><f:facet name="header">Purpose</f:facet><h:outputText value="#{app.reason}"/></h:column>
+                        <h:column>
+                            <f:facet name="header">Status</f:facet>
+                            <h:outputText value="PENDING"  styleClass="badge badge-warn"    rendered="#{app.status == 'PENDING'}"/>
+                            <h:outputText value="APPROVED" styleClass="badge badge-success" rendered="#{app.status == 'APPROVED'}"/>
+                            <h:outputText value="REJECTED" styleClass="badge badge-danger"  rendered="#{app.status == 'REJECTED'}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Notes</f:facet>
+                            <h:outputText value="#{app.rejectionReason}" rendered="#{app.rejectionReason != null}"/>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</h:body>
+</html>
