@@ -54,8 +54,7 @@
                                          converterMessage="Amount must be a number (e.g. 150000)."
                                          validatorMessage="Minimum loan amount is UGX 10,000."
                                          placeholder="e.g. 150000">
-                                <f:convertNumber/>
-                                <f:validateDoubleRange minimum="10000"/>
+                                <f:validateDoubleRange minimum="10000.0"/>
                             </h:inputText>
                             <h:message for="loanAmt" styleClass="field-error"/>
                             <span class="field-hint">Minimum: UGX 10,000. Maximum: 3× your savings balance.</span>
@@ -107,8 +106,7 @@
                                              converterMessage="Amount must be a number (e.g. 55000)."
                                              validatorMessage="Minimum repayment is UGX 1,000."
                                              placeholder="e.g. 55000">
-                                    <f:convertNumber/>
-                                    <f:validateDoubleRange minimum="1000"/>
+                                    <f:validateDoubleRange minimum="1000.0"/>
                                 </h:inputText>
                                 <h:message for="repayAmt" styleClass="field-error"/>
                                 <span class="field-hint">Cannot exceed remaining balance.</span>
