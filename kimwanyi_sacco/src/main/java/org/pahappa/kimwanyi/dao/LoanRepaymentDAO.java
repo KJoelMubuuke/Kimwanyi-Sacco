@@ -74,7 +74,7 @@ public class LoanRepaymentDAO {
 
     public List<LoanRepayment> findByLoanId(Long loanId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM LoanRepayment WHERE loan.id = :loanId ORDER BY paidAt DESC", LoanRepayment.class)
+            return session.createQuery("FROM LoanRepayment r WHERE r.loan.id = :loanId ORDER BY r.paidAt DESC", LoanRepayment.class)
                     .setParameter("loanId", loanId)
                     .list();
         }
