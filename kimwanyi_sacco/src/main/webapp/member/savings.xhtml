@@ -71,8 +71,7 @@
                                          converterMessage="Amount must be a number (e.g. 50000)."
                                          validatorMessage="Minimum deposit is UGX 1,000."
                                          placeholder="e.g. 50000">
-                                <f:convertNumber/>
-                                <f:validateDoubleRange minimum="1000"/>
+                                <f:validateDoubleRange minimum="1000.0"/>
                             </h:inputText>
                             <h:message for="depAmt" styleClass="field-error"/>
                             <span class="field-hint">Minimum deposit: UGX 1,000.</span>
@@ -103,8 +102,7 @@
                                          converterMessage="Amount must be a number (e.g. 30000)."
                                          validatorMessage="Minimum withdrawal is UGX 1,000."
                                          placeholder="e.g. 30000">
-                                <f:convertNumber/>
-                                <f:validateDoubleRange minimum="1000"/>
+                                <f:validateDoubleRange minimum="1000.0"/>
                             </h:inputText>
                             <h:message for="wdAmt" styleClass="field-error"/>
                             <span class="field-hint">You must keep at least UGX 20,000 in your account.</span>
