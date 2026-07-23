@@ -29,7 +29,7 @@ public class AdminDAO {
 
     public Admin findByUsername(String username) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("FROM Admin WHERE username = :username", Admin.class)
+            return session.createQuery("FROM Admin a WHERE a.username = :username", Admin.class)
                     .setParameter("username", username)
                     .uniqueResult();
         }
