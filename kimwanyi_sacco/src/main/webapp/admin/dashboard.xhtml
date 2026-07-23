@@ -5,40 +5,98 @@
       xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
     <title>Admin Dashboard — Kimwanyi SACCO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
 </h:head>
 <h:body>
-    <h2>Admin Dashboard</h2>
-    <p>Welcome, <h:outputText value="#{loginBean.currentUser.displayName}" />.</p>
-    <h3>System Summary</h3>
-    <table border="1" cellpadding="6">
-        <tr>
-            <td>Total Active Members</td>
-            <td><h:outputText value="#{adminDashboardBean.summary.totalActiveMembers}" /></td>
-        </tr>
-        <tr>
-            <td>Total Savings Held</td>
-            <td><h:outputText value="#{adminDashboardBean.summary.totalSavingsHeld}">
-                <f:convertNumber type="currency" currencySymbol="UGX " minFractionDigits="2"/>
-            </h:outputText></td>
-        </tr>
-        <tr>
-            <td>Active Loans</td>
-            <td><h:outputText value="#{adminDashboardBean.summary.activeLoansCount}" /></td>
-        </tr>
-        <tr>
-            <td>Total Outstanding Loan Balance</td>
-            <td><h:outputText value="#{adminDashboardBean.summary.totalOutstandingLoanBalance}">
-                <f:convertNumber type="currency" currencySymbol="UGX " minFractionDigits="2"/>
-            </h:outputText></td>
-        </tr>
-        <tr>
-            <td>Pending Loan Applications</td>
-            <td><h:outputText value="#{adminDashboardBean.summary.pendingApplicationsCount}" /></td>
-        </tr>
-    </table>
-    <br/>
-    <h:form>
-        <h:commandButton value="Log out" action="#{loginBean.logout}" />
-    </h:form>
+<div class="layout-wrapper">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Admin Panel</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/admin/dashboard.xhtml" styleClass="active">
+                <i class="nav-icon">⊞</i> Dashboard
+            </h:link>
+            <h:link outcome="/admin/members.xhtml">
+                <i class="nav-icon">👥</i> Members
+            </h:link>
+            <h:link outcome="/admin/loans.xhtml">
+                <i class="nav-icon">📋</i> Loan Applications
+            </h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <!-- Main -->
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">Admin Dashboard</span>
+            <span class="topbar-user">Admin: <h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <span class="stat-label">Active Members</span>
+                    <div class="stat-value">
+                        <h:outputText value="#{adminDashboardBean.summary.totalActiveMembers}"/>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Savings Held</span>
+                    <div class="stat-value money">
+                        UGX <h:outputText value="#{adminDashboardBean.summary.totalSavingsHeld}">
+                            <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+                        </h:outputText>
+                    </div>
+                </div>
+                <div class="stat-card danger">
+                    <span class="stat-label">Active Loans</span>
+                    <div class="stat-value">
+                        <h:outputText value="#{adminDashboardBean.summary.activeLoansCount}"/>
+                    </div>
+                </div>
+                <div class="stat-card accent">
+                    <span class="stat-label">Outstanding Loan Balance</span>
+                    <div class="stat-value money">
+                        UGX <h:outputText value="#{adminDashboardBean.summary.totalOutstandingLoanBalance}">
+                            <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+                        </h:outputText>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Pending Applications</span>
+                    <div class="stat-value">
+                        <h:outputText value="#{adminDashboardBean.summary.pendingApplicationsCount}"/>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Nav Cards -->
+            <div class="grid-auto mt-8">
+                <div class="card">
+                    <div class="card-header">👥 Member Management</div>
+                    <p class="text-muted mb-4">Register new members, view all accounts, deactivate members.</p>
+                    <h:link outcome="/admin/members.xhtml" styleClass="btn btn-primary">Go to Members</h:link>
+                </div>
+                <div class="card">
+                    <div class="card-header">📋 Loan Applications</div>
+                    <p class="text-muted mb-4">Review pending loan applications, approve or reject them.</p>
+                    <h:link outcome="/admin/loans.xhtml" styleClass="btn btn-primary">Review Loans</h:link>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
 </h:body>
 </html>
