@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Savings — Kimwanyi SACCO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Member Portal</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/member/dashboard.xhtml"><i class="nav-icon">⊞</i> Dashboard</h:link>
+            <h:link outcome="/member/savings.xhtml" styleClass="active"><i class="nav-icon">💰</i> Savings</h:link>
+            <h:link outcome="/member/loans.xhtml"><i class="nav-icon">📋</i> Loans</h:link>
+            <h:link outcome="/member/profile.xhtml"><i class="nav-icon">👤</i> My Profile</h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">Savings Account</span>
+            <span class="topbar-user"><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                        infoClass="sacco-msg info" showDetail="true"/>
+
+            <!-- Balance -->
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <span class="stat-label">Available Balance</span>
+                    <div class="balance-display">
+                        <span class="balance-currency">UGX</span>
+                        <span class="balance-amount">
+                            <h:outputText value="#{memberDashboardBean.balance}">
+                                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+                            </h:outputText>
+                        </span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Minimum Balance Required</span>
+                    <div class="stat-value money">UGX 20,000</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- Deposit -->
+                <div class="card">
+                    <div class="card-header">💵 Make a Deposit</div>
+                    <h:form id="depositForm">
+                        <div class="form-group">
+                            <h:outputLabel for="depAmt" value="Amount (UGX) *"/>
+                            <h:inputText id="depAmt" value="#{savingsBean.depositAmount}"
+                                         required="true"
+                                         requiredMessage="Enter the deposit amount."
+                                         converterMessage="Amount must be a number (e.g. 50000)."
+                                         validatorMessage="Minimum deposit is UGX 1,000."
+                                         placeholder="e.g. 50000">
+                                <f:convertNumber/>
+                                <f:validateDoubleRange minimum="1000"/>
+                            </h:inputText>
+                            <h:message for="depAmt" styleClass="field-error"/>
+                            <span class="field-hint">Minimum deposit: UGX 1,000.</span>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel for="depDesc" value="Description"/>
+                            <h:inputText id="depDesc" value="#{savingsBean.depositDescription}"
+                                         validatorMessage="Description must not exceed 255 characters."
+                                         placeholder="Optional note" maxlength="255">
+                                <f:validateLength maximum="255"/>
+                            </h:inputText>
+                            <h:message for="depDesc" styleClass="field-error"/>
+                        </div>
+                        <h:commandButton id="depositBtn" value="Deposit" action="#{savingsBean.deposit}"
+                                         styleClass="btn btn-primary btn-full"/>
+                    </h:form>
+                </div>
+
+                <!-- Withdraw -->
+                <div class="card">
+                    <div class="card-header">🏧 Make a Withdrawal</div>
+                    <h:form id="withdrawForm">
+                        <div class="form-group">
+                            <h:outputLabel for="wdAmt" value="Amount (UGX) *"/>
+                            <h:inputText id="wdAmt" value="#{savingsBean.withdrawAmount}"
+                                         required="true"
+                                         requiredMessage="Enter the withdrawal amount."
+                                         converterMessage="Amount must be a number (e.g. 30000)."
+                                         validatorMessage="Minimum withdrawal is UGX 1,000."
+                                         placeholder="e.g. 30000">
+                                <f:convertNumber/>
+                                <f:validateDoubleRange minimum="1000"/>
+                            </h:inputText>
+                            <h:message for="wdAmt" styleClass="field-error"/>
+                            <span class="field-hint">You must keep at least UGX 20,000 in your account.</span>
+                        </div>
+                        <div class="form-group">
+                            <h:outputLabel for="wdDesc" value="Description"/>
+                            <h:inputText id="wdDesc" value="#{savingsBean.withdrawDescription}"
+                                         validatorMessage="Description must not exceed 255 characters."
+                                         placeholder="Optional note" maxlength="255">
+                                <f:validateLength maximum="255"/>
+                            </h:inputText>
+                            <h:message for="wdDesc" styleClass="field-error"/>
+                        </div>
+                        <h:commandButton id="withdrawBtn" value="Withdraw" action="#{savingsBean.withdraw}"
+                                         styleClass="btn btn-accent btn-full"/>
+                    </h:form>
+                </div>
+            </div>
+
+            <!-- Full Statement -->
+            <div class="card mt-8">
+                <div class="card-header">Account Statement</div>
+                <div class="table-wrap">
+                    <h:dataTable value="#{memberDashboardBean.statement}" var="txn" styleClass="sacco-table">
+                        <h:column>
+                            <f:facet name="header">Date</f:facet>
+                            <h:outputText value="#{txn.createdAt}"><f:convertDateTime pattern="dd-MMM-yyyy HH:mm"/></h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Type</f:facet>
+                            <h:outputText value="DEPOSIT"    styleClass="badge badge-success" rendered="#{txn.type == 'DEPOSIT'}"/>
+                            <h:outputText value="WITHDRAWAL" styleClass="badge badge-warn"    rendered="#{txn.type == 'WITHDRAWAL'}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Amount (UGX)</f:facet>
+                            <h:outputText value="#{txn.amount}"><f:convertNumber groupingUsed="true" minFractionDigits="2"/></h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Balance After (UGX)</f:facet>
+                            <h:outputText value="#{txn.balanceAfter}"><f:convertNumber groupingUsed="true" minFractionDigits="2"/></h:outputText>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Description</f:facet>
+                            <h:outputText value="#{txn.description}"/>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</h:body>
+</html>
