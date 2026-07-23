@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+    <title>Members — Kimwanyi SACCO Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+    <nav class="sidebar">
+        <div class="sidebar-brand">
+            <h1>🌿 Kimwanyi SACCO</h1>
+            <span class="brand-sub">Admin Panel</span>
+        </div>
+        <div class="sidebar-nav">
+            <h:link outcome="/admin/dashboard.xhtml"><i class="nav-icon">⊞</i> Dashboard</h:link>
+            <h:link outcome="/admin/members.xhtml" styleClass="active"><i class="nav-icon">👥</i> Members</h:link>
+            <h:link outcome="/admin/loans.xhtml"><i class="nav-icon">📋</i> Loan Applications</h:link>
+        </div>
+        <div class="sidebar-footer">
+            <h:form>
+                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
+                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            </h:form>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="topbar">
+            <span class="topbar-title">Member Management</span>
+            <span class="topbar-user">Admin: <h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+        </div>
+
+        <div class="page-body">
+            <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+                        infoClass="sacco-msg info" showDetail="true"/>
+
+            <!-- Register Member Form -->
+            <div class="card mb-4">
+                <div class="card-header">➕ Register New Member</div>
+                <h:form id="regForm">
+                    <div class="grid-2">
+
+                        <div class="form-group">
+                            <h:outputLabel for="natId" value="National ID *"/>
+                            <h:inputText id="natId" value="#{adminMembersBean.nationalId}"
+                                         required="true"
+                                         requiredMessage="National ID is required."
+                                         validatorMessage="National ID must be exactly 14 alphanumeric characters (e.g. CM9000123456HKWF)."
+                                         placeholder="e.g. CM9000123456HKWF" maxlength="14">
+                                <f:validateRegex pattern="[A-Za-z0-9]{14}"/>
+                            </h:inputText>
+                            <h:message for="natId" styleClass="field-error"/>
+                            <span class="field-hint">14 characters, letters and digits only.</span>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="mFullName" value="Full Name *"/>
+                            <h:inputText id="mFullName" value="#{adminMembersBean.fullName}"
+                                         required="true"
+                                         requiredMessage="Full name is required."
+                                         validatorMessage="Full name must be 2–120 characters, letters and spaces only."
+                                         placeholder="e.g. John Doe" maxlength="120">
+                                <f:validateLength minimum="2" maximum="120"/>
+                                <f:validateRegex pattern="[A-Za-z ]{2,120}"/>
+                            </h:inputText>
+                            <h:message for="mFullName" styleClass="field-error"/>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="mPhone" value="Phone Number"/>
+                            <h:inputText id="mPhone" value="#{adminMembersBean.phoneNumber}"
+                                         validatorMessage="Enter a valid Uganda phone number (e.g. 0771234567 or +256771234567)."
+                                         placeholder="+256771234567 or 0771234567" maxlength="20">
+                                <f:validateRegex pattern="(\+256|0)[0-9]{9}"/>
+                            </h:inputText>
+                            <h:message for="mPhone" styleClass="field-error"/>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="mEmail" value="Email Address *"/>
+                            <h:inputText id="mEmail" value="#{adminMembersBean.email}"
+                                         required="true"
+                                         requiredMessage="Email address is required."
+                                         validatorMessage="Enter a valid email address (e.g. name@example.com)."
+                                         placeholder="member@email.com" maxlength="120">
+                                <f:validateRegex pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
+                            </h:inputText>
+                            <h:message for="mEmail" styleClass="field-error"/>
+                        </div>
+
+                        <div class="form-group">
+                            <h:outputLabel for="mPwd" value="Initial Password *"/>
+                            <h:inputSecret id="mPwd" value="#{adminMembersBean.password}"
+                                           required="true"
+                                           requiredMessage="An initial password is required."
+                                           validatorMessage="Password must be at least 8 characters and contain letters and numbers."
+                                           placeholder="Min. 8 characters, letters + numbers" maxlength="72">
+                                <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
+                            </h:inputSecret>
+                            <h:message for="mPwd" styleClass="field-error"/>
+                        </div>
+
+                    </div>
+                    <h:commandButton id="regMemberBtn" value="Register Member"
+                                     action="#{adminMembersBean.registerMember}"
+                                     styleClass="btn btn-primary"/>
+                </h:form>
+            </div>
+
+            <!-- All Members Table -->
+            <div class="card">
+                <div class="card-header">All Members</div>
+                <div class="table-wrap">
+                    <h:dataTable value="#{adminMembersBean.allMembers}" var="m" styleClass="sacco-table">
+                        <h:column><f:facet name="header">ID</f:facet><h:outputText value="#{m.id}"/></h:column>
+                        <h:column><f:facet name="header">Membership No.</f:facet><h:outputText value="#{m.membershipNumber}"/></h:column>
+                        <h:column><f:facet name="header">Full Name</f:facet><h:outputText value="#{m.fullName}"/></h:column>
+                        <h:column><f:facet name="header">National ID</f:facet><h:outputText value="#{m.nationalId}"/></h:column>
+                        <h:column><f:facet name="header">Phone</f:facet><h:outputText value="#{m.phoneNumber}"/></h:column>
+                        <h:column><f:facet name="header">Email</f:facet><h:outputText value="#{m.email}"/></h:column>
+                        <h:column>
+                            <f:facet name="header">Status</f:facet>
+                            <h:outputText value="ACTIVE"      styleClass="badge badge-success" rendered="#{m.status == 'ACTIVE'}"/>
+                            <h:outputText value="DEACTIVATED" styleClass="badge badge-danger"  rendered="#{m.status != 'ACTIVE'}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Action</f:facet>
+                            <h:form>
+                                <h:commandButton value="Deactivate" action="#{adminMembersBean.deactivate(m.id)}"
+                                                 styleClass="btn btn-danger btn-sm"
+                                                 rendered="#{m.status == 'ACTIVE'}"
+                                                 onclick="return confirm('Deactivate this member?');"/>
+                                <h:commandButton value="Activate" action="#{adminMembersBean.activate(m.id)}"
+                                                 styleClass="btn btn-success btn-sm"
+                                                 rendered="#{m.status != 'ACTIVE'}"
+                                                 onclick="return confirm('Activate this member?');"/>
+                            </h:form>
+                        </h:column>
+                    </h:dataTable>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</h:body>
+</html>
