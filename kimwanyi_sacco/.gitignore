@@ -36,6 +36,7 @@ build/
 .vscode/
 
 ### Mac OS ###
-.DS_Store.smarttomcat/
+.DS_Store
+.smarttomcat/
 GenerateHash.java
 GenerateHash.class
