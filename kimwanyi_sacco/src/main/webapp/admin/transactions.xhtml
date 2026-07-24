@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+  <title>Transactions — Kimwanyi SACCO Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1><h:graphicImage library="images" name="site-icon.png" style="width:28px; height:28px; vertical-align:middle; margin-right:8px;"/> Kimwanyi SACCO</h1>
+      <span class="brand-sub">Admin Panel</span>
+    </div>
+            <div class="sidebar-nav">
+      <h:link outcome="/admin/dashboard.xhtml">
+        <h:graphicImage library="images" name="dashboard_icon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Dashboard
+      </h:link>
+      <h:link outcome="/admin/members.xhtml">
+        <h:graphicImage library="images" name="generic-users-group.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Members
+      </h:link>
+      <h:link outcome="/admin/transactions.xhtml">
+        <h:graphicImage library="images" name="savingsicon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Transactions
+      </h:link>
+      <h:link outcome="/admin/loans.xhtml">
+        <h:graphicImage library="images" name="generic-user.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Loans
+      </h:link>
+      <h:link outcome="/admin/system-logs.xhtml">
+        <h:graphicImage library="images" name="system_admin_logo.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> System Logs
+      </h:link>
+    </div>
+    <div class="sidebar-footer">
+      <h:form>
+        <h:commandLink action="#{loginBean.logout}" styleClass="nav-btn" style="color:#f5c2c2; display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:18px; height:18px; margin-right:10px;"/> Log Out</h:commandLink>
+      </h:form>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">Transactions</span>
+      </div>
+      <div class="topbar-right">
+        <div class="profile-dropdown-wrapper">
+          <button class="profile-btn" onclick="toggleProfileMenu()" type="button">
+            <h:graphicImage library="images" name="generic-user.png" styleClass="profile-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"/>
+            <span><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+            <span class="dropdown-arrow">▾</span>
+          </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <span class="profile-role">System Administrator</span>
+              <span class="profile-role-tag">(Admin)</span>
+            </div>
+            <h:link outcome="/admin/my-profile.xhtml" styleClass="profile-menu-item"><h:graphicImage library="images" name="generic-user.png" style="width:16px; height:16px; vertical-align:middle; margin-right:8px;"/> My Profile</h:link>
+            <h:form styleClass="profile-menu-form">
+              <h:commandLink action="#{loginBean.logout}" styleClass="profile-menu-item sign-out-btn" style="display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:16px; height:16px; margin-right:8px;"/> Sign Out</h:commandLink>
+            </h:form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="card">
+        <div class="card-header"> All Savings Transactions</div>
+        <div class="table-wrap">
+          <h:dataTable value="#{adminTransactionsBean.allTransactions}" var="tx" styleClass="sacco-table">
+            <h:column>
+              <f:facet name="header">ID</f:facet>
+              <h:outputText value="#{tx.id}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Member</f:facet>
+              <h:outputText value="#{tx.savingsAccount.member.fullName}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Membership No.</f:facet>
+              <h:outputText value="#{tx.savingsAccount.member.membershipNumber}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Type</f:facet>
+              <h:outputText value="#{tx.type}"
+                     styleClass="badge badge-success" rendered="#{tx.type == 'DEPOSIT'}"/>
+              <h:outputText value="#{tx.type}"
+                     styleClass="badge badge-danger" rendered="#{tx.type == 'WITHDRAWAL'}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Amount (UGX)</f:facet>
+              <h:outputText value="#{tx.amount}">
+                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+              </h:outputText>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Balance After (UGX)</f:facet>
+              <h:outputText value="#{tx.balanceAfter}">
+                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+              </h:outputText>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Description</f:facet>
+              <h:outputText value="#{tx.description}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Date</f:facet>
+              <h:outputText value="#{tx.createdAtDisplay}"/>
+            </h:column>
+          </h:dataTable>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  function toggleProfileMenu() {
+    var menu = document.getElementById('profileDropdown');
+    menu.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    var wrapper = document.querySelector('.profile-dropdown-wrapper');
+    if (wrapper &amp;&amp; !wrapper.contains(e.target)) {
+      var menu = document.getElementById('profileDropdown');
+      if (menu) menu.classList.remove('open');
+    }
+  });
+</script>
+</h:body>
+</html>

@@ -3,6 +3,8 @@ package org.pahappa.kimwanyi.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Table(name = "transactions")
@@ -27,6 +29,15 @@ public class Transaction {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "charge", nullable = false, precision = 19, scale = 2)
+    private BigDecimal charge = BigDecimal.ZERO;
+
+    @Column(name = "receipt_no", length = 50)
+    private String receiptNo;
+
+    @Column(name = "manager", length = 120)
+    private String manager;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -54,5 +65,19 @@ public class Transaction {
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
 
+    public BigDecimal getCharge() { return charge; }
+    public void setCharge(BigDecimal charge) { this.charge = charge; }
+
+    public String getReceiptNo() { return receiptNo; }
+    public void setReceiptNo(String receiptNo) { this.receiptNo = receiptNo; }
+
+    public String getManager() { return manager; }
+    public void setManager(String manager) { this.manager = manager; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
+
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm");
+    public String getCreatedAtDisplay() {
+        return createdAt != null ? createdAt.format(DISPLAY_FORMAT) : "";
+    }
 }
