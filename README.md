@@ -97,6 +97,7 @@ http://localhost:8080/kimwanyi_sacco/
 | `/member/dashboard.xhtml`        | Balance overview & transaction history |
 | `/member/savings.xhtml`          | Deposit, withdraw, full statement    |
 | `/member/loans.xhtml`            | Apply for loan, repay, view history  |
+| `/member/profile.xhtml`          | View and update profile/password     |
 
 ### Admin Panel
 
@@ -105,6 +106,9 @@ http://localhost:8080/kimwanyi_sacco/
 | `/admin/dashboard.xhtml`         | KPI summary (members, savings, loans)|
 | `/admin/members.xhtml`           | Register & manage member accounts    |
 | `/admin/loans.xhtml`             | Approve / reject loan applications   |
+| `/admin/transactions.xhtml`      | View system-wide transaction history |
+| `/admin/system-logs.xhtml`       | View comprehensive system audit logs |
+| `/admin/my-profile.xhtml`        | Manage admin profile and password    |
 
 ---
 
@@ -121,10 +125,10 @@ http://localhost:8080/kimwanyi_sacco/
 - Must repay fully before applying again
 - Only admins can approve or reject
 
-**Members**
+**System & Audit**
 - Unique National ID and Membership Number enforced
-- Accounts deactivated (not deleted) by admin
-- Admin accounts are structurally separate from member accounts
+- Accounts deactivated (not deleted) by admin to maintain history
+- All major admin and member actions are securely logged in the system audit trail
 
 ---
 
@@ -136,34 +140,21 @@ kimwanyi_sacco/
 │   └── schema.sql                   # Full MySQL schema
 ├── src/main/
 │   ├── java/org/pahappa/kimwanyi/
-│   │   ├── bean/                    # JSF Managed Beans
-│   │   │   ├── LoginBean.java
-│   │   │   ├── RegisterBean.java
-│   │   │   ├── MemberDashboardBean.java
-│   │   │   ├── SavingsBean.java
-│   │   │   ├── LoanBean.java
-│   │   │   ├── AdminDashboardBean.java
-│   │   │   ├── AdminLoansBean.java
-│   │   │   └── AdminMembersBean.java
+│   │   ├── bean/                    # JSF Managed Beans (Admin, Member, Login, Profile)
 │   │   ├── dao/                     # Data Access Objects (Hibernate)
-│   │   ├── model/                   # JPA Entity classes
-│   │   ├── service/                 # Business logic layer
-│   │   └── web/                     # Filters & Lifecycle Listeners
+│   │   ├── model/                   # JPA Entity classes (Member, Loan, SystemLog, etc.)
+│   │   ├── service/                 # Business logic & Email Notification layer
+│   │   └── web/                     # Filters (Auth) & Lifecycle Listeners
 │   ├── resources/
-│   │   └── hibernate.cfg.xml
+│   │   └── hibernate.cfg.xml        # Database connection config
 │   └── webapp/
 │       ├── login.xhtml
 │       ├── register.xhtml
-│       ├── admin/
-│       │   ├── dashboard.xhtml
-│       │   ├── members.xhtml
-│       │   └── loans.xhtml
-│       ├── member/
-│       │   ├── dashboard.xhtml
-│       │   ├── savings.xhtml
-│       │   └── loans.xhtml
-│       └── resources/css/
-│           └── sacco.css
+│       ├── admin/                   # Admin protected views
+│       ├── member/                  # Member protected views
+│       └── resources/
+│           ├── css/sacco.css        # Global stylesheet
+│           └── images/              # Logos and UI icons
 └── pom.xml
 ```
 
