@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+  <title>System Logs — Kimwanyi SACCO Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1><h:graphicImage library="images" name="site-icon.png" style="width:28px; height:28px; vertical-align:middle; margin-right:8px;"/> Kimwanyi SACCO</h1>
+      <span class="brand-sub">Admin Panel</span>
+    </div>
+            <div class="sidebar-nav">
+      <h:link outcome="/admin/dashboard.xhtml">
+        <h:graphicImage library="images" name="dashboard_icon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Dashboard
+      </h:link>
+      <h:link outcome="/admin/members.xhtml">
+        <h:graphicImage library="images" name="generic-users-group.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Members
+      </h:link>
+      <h:link outcome="/admin/transactions.xhtml">
+        <h:graphicImage library="images" name="savingsicon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Transactions
+      </h:link>
+      <h:link outcome="/admin/loans.xhtml">
+        <h:graphicImage library="images" name="generic-user.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Loans
+      </h:link>
+      <h:link outcome="/admin/system-logs.xhtml">
+        <h:graphicImage library="images" name="system_admin_logo.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> System Logs
+      </h:link>
+    </div>
+    <div class="sidebar-footer">
+      <h:form>
+        <h:commandLink action="#{loginBean.logout}" styleClass="nav-btn" style="color:#f5c2c2; display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:18px; height:18px; margin-right:10px;"/> Log Out</h:commandLink>
+      </h:form>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">System Logs</span>
+      </div>
+      <div class="topbar-right">
+        <div class="profile-dropdown-wrapper">
+          <button class="profile-btn" onclick="toggleProfileMenu()" type="button">
+            <h:graphicImage library="images" name="generic-user.png" styleClass="profile-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"/>
+            <span><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+            <span class="dropdown-arrow">▾</span>
+          </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <span class="profile-role">System Administrator</span>
+              <span class="profile-role-tag">(Admin)</span>
+            </div>
+            <h:link outcome="/admin/my-profile.xhtml" styleClass="profile-menu-item"><h:graphicImage library="images" name="generic-user.png" style="width:16px; height:16px; vertical-align:middle; margin-right:8px;"/> My Profile</h:link>
+            <h:form styleClass="profile-menu-form">
+              <h:commandLink action="#{loginBean.logout}" styleClass="profile-menu-item sign-out-btn" style="display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:16px; height:16px; margin-right:8px;"/> Sign Out</h:commandLink>
+            </h:form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+
+      <div class="card">
+        <div class="card-header">
+           System Logs
+          <span class="logs-badge">All</span>
+        </div>
+        <div class="table-wrap">
+          <h:dataTable value="#{systemLogsBean.allLogs}" var="log" styleClass="sacco-table">
+            <h:column>
+              <f:facet name="header">#</f:facet>
+              <h:outputText value="#{log.id}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Date / Time</f:facet>
+              <h:outputText value="#{log.createdAtDisplay}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">IP Address</f:facet>
+              <h:outputText value="#{log.ipAddress}" styleClass="log-ip"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Action</f:facet>
+              <h:outputText value="#{log.action}"/>
+              <h:outputText value=": #{log.actorName}" rendered="#{not empty log.actorName}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Status</f:facet>
+              <h:outputText value="Successful"
+                     styleClass="log-badge log-success"
+                     rendered="#{log.status == 'SUCCESSFUL'}"/>
+              <h:outputText value="Failed"
+                     styleClass="log-badge log-failed"
+                     rendered="#{log.status == 'FAILED'}"/>
+              <h:outputText value="Info"
+                     styleClass="log-badge log-info"
+                     rendered="#{log.status == 'INFO'}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Type</f:facet>
+              <h:outputText value="Member" rendered="#{log.actorType == 'M'}" styleClass="badge badge-info"/>
+              <h:outputText value="Admin" rendered="#{log.actorType == 'A'}" styleClass="badge badge-success"/>
+            </h:column>
+          </h:dataTable>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<script>
+  function toggleProfileMenu() {
+    var menu = document.getElementById('profileDropdown');
+    menu.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    var wrapper = document.querySelector('.profile-dropdown-wrapper');
+    if (wrapper &amp;&amp; !wrapper.contains(e.target)) {
+      var menu = document.getElementById('profileDropdown');
+      if (menu) menu.classList.remove('open');
+    }
+  });
+</script>
+</h:body>
+</html>
