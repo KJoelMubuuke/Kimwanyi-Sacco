@@ -3,6 +3,7 @@ package org.pahappa.kimwanyi.service;
 import org.hibernate.Session;
 import org.pahappa.kimwanyi.model.SavingsAccount;
 import org.pahappa.kimwanyi.model.Transaction;
+import org.pahappa.kimwanyi.service.AuditLogService;
 import org.pahappa.kimwanyi.util.HibernateUtil;
 
 import java.math.BigDecimal;
@@ -42,7 +43,8 @@ public class AccountService {
         }
 
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
@@ -67,11 +69,17 @@ public class AccountService {
             session.persist(transaction);
 
             tx.commit();
+            AuditLogService.log("Deposit",
+                    "UGX " + amount + " to account " + account.getId(),
+                    account.getMember() != null ? account.getMember().getFullName() : "Member",
+                    "M", "SUCCESSFUL");
             return transaction;
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -86,7 +94,8 @@ public class AccountService {
         }
 
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
@@ -116,11 +125,17 @@ public class AccountService {
             session.persist(transaction);
 
             tx.commit();
+            AuditLogService.log("Withdrawal",
+                    "UGX " + amount + " from account " + account.getId(),
+                    account.getMember() != null ? account.getMember().getFullName() : "Member",
+                    "M", "SUCCESSFUL");
             return transaction;
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -148,7 +163,8 @@ public class AccountService {
      */
     public Transaction applyMonthlyInterest(Long memberId) {
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             SavingsAccount account = session.createQuery(
@@ -198,6 +214,8 @@ public class AccountService {
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 

@@ -11,13 +11,16 @@ public class LoanDAO {
 
     public void save(Loan loan) {
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.persist(loan);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -51,13 +54,16 @@ public class LoanDAO {
 
     public void update(Loan loan) {
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.merge(loan);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 }

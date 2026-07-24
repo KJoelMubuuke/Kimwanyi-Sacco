@@ -19,6 +19,9 @@ public class Member {
     @Column(name = "full_name", nullable = false, length = 120)
     private String fullName;
 
+    @Column(name = "gender", nullable = false, length = 10)
+    private String gender;
+
    @Column(name = "phone_number", length = 20)
    private String phoneNumber;
    
@@ -62,6 +65,9 @@ public class Member {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }

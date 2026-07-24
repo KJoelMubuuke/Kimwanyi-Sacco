@@ -7,6 +7,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 @ManagedBean(name = "loginBean")
@@ -27,7 +28,8 @@ public class LoginBean implements Serializable {
     public String login() {
         try {
             AuthService authService = new AuthService();
-            currentUser = authService.login(identifier, password);
+            String ip = getClientIp();
+            currentUser = authService.login(identifier, password, ip);
             password = null; // never keep the plaintext around
 
             if (currentUser.getRole() == AuthResult.Role.ADMIN) {
@@ -43,12 +45,36 @@ public class LoginBean implements Serializable {
     }
 
     public String logout() {
+        // Record logout before session is destroyed
+        if (currentUser != null) {
+            try {
+                String actorType = (currentUser.getRole() == AuthResult.Role.ADMIN) ? "A" : "M";
+                new AuthService().recordLogout(currentUser.getDisplayName(), actorType, getClientIp());
+            } catch (Exception ignored) { /* logging must not block logout */ }
+        }
         FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
         return "/login.xhtml?faces-redirect=true";
     }
 
     public boolean isLoggedIn() {
         return currentUser != null;
+    }
+
+    /** Best-effort extraction of the real client IP (handles proxies). */
+    private String getClientIp() {
+        try {
+            HttpServletRequest req = (HttpServletRequest)
+                    FacesContext.getCurrentInstance().getExternalContext().getRequest();
+            String ip = req.getHeader("X-Forwarded-For");
+            if (ip == null || ip.isBlank() || "unknown".equalsIgnoreCase(ip)) {
+                ip = req.getRemoteAddr();
+            } else {
+                ip = ip.split(",")[0].trim(); // first address before any proxy hops
+            }
+            return ip;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // --- getters/setters ---

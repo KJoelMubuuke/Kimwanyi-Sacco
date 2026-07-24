@@ -13,13 +13,16 @@ public class LoanRepaymentDAO {
 
     public void save(LoanRepayment repayment) {
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.persist(repayment);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -32,7 +35,8 @@ public class LoanRepaymentDAO {
         }
 
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             Loan loan = session.get(Loan.class, loanId);
@@ -63,6 +67,8 @@ public class LoanRepaymentDAO {
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 

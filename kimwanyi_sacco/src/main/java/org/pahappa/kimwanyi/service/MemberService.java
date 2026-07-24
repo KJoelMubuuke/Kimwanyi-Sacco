@@ -5,6 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.pahappa.kimwanyi.dao.MemberDAO;
 import org.pahappa.kimwanyi.model.Member;
 import org.pahappa.kimwanyi.model.SavingsAccount;
+import org.pahappa.kimwanyi.service.AuditLogService;
 import org.pahappa.kimwanyi.util.HibernateUtil;
 
 import java.math.BigDecimal;
@@ -27,10 +28,12 @@ public class MemberService {
      *         in use (checked here first so the caller gets a clear message
      *         instead of a raw DB unique-constraint exception)
      */
-    public Member register(String nationalId, String fullName,
+    public Member register(String nationalId, String fullName, String gender,
                            String phoneNumber, String email, String plainPassword) {
 
         // --- Field validation (mirrors the JSF validators as a backend safety net) ---
+        if (gender == null || gender.isBlank())
+            throw new IllegalArgumentException("Gender must not be null.");
         if (nationalId == null || !nationalId.matches("[A-Za-z0-9]{14}"))
             throw new IllegalArgumentException("National ID must be exactly 14 alphanumeric characters.");
 
@@ -63,13 +66,15 @@ public class MemberService {
         }
 
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             Member member = new Member();
             member.setNationalId(nationalId);
             member.setMembershipNumber(generatedMembershipNumber);
             member.setFullName(fullName);
+            member.setGender(gender);
             member.setPhoneNumber(phoneNumber);
             member.setEmail(email);
             member.setPasswordHash(BCrypt.hashpw(plainPassword, BCrypt.gensalt()));
@@ -80,15 +85,19 @@ public class MemberService {
 
             SavingsAccount account = new SavingsAccount();
             account.setMember(member);
-            account.setBalance(BigDecimal.ZERO);
+            account.setBalance(new BigDecimal("20000.00"));
             session.persist(account);
 
             tx.commit();
+            AuditLogService.log("Member Registration", fullName, fullName, "M", "SUCCESSFUL");
             return member;
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
+            AuditLogService.log("Member Registration", fullName + " (FAILED)", fullName, "M", "FAILED");
             throw e;
+        } finally {
+            session.close();
         }
     }
 

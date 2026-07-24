@@ -3,6 +3,8 @@ package org.pahappa.kimwanyi.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +79,11 @@ public class Loan {
 
     public LocalDateTime getApprovedAt() { return approvedAt; }
     public void setApprovedAt(LocalDateTime approvedAt) { this.approvedAt = approvedAt; }
+
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+    public String getApprovedAtDisplay() {
+        return approvedAt != null ? approvedAt.format(DISPLAY_FORMAT) : "";
+    }
 
     public List<LoanRepayment> getRepayments() { return repayments; }
     public void setRepayments(List<LoanRepayment> repayments) { this.repayments = repayments; }

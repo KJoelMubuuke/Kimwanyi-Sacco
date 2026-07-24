@@ -1,102 +1,276 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-    <title>Admin Dashboard — Kimwanyi SACCO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <h:outputStylesheet library="css" name="sacco.css"/>
+  <title>Admin Dashboard — Kimwanyi SACCO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
 </h:head>
 <h:body>
 <div class="layout-wrapper">
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-brand">
-            <h1>🌿 Kimwanyi SACCO</h1>
-            <span class="brand-sub">Admin Panel</span>
-        </div>
-        <div class="sidebar-nav">
-            <h:link outcome="/admin/dashboard.xhtml" styleClass="active">
-                <i class="nav-icon">⊞</i> Dashboard
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1><h:graphicImage library="images" name="site-icon.png" style="width:28px; height:28px; vertical-align:middle; margin-right:8px;"/> Kimwanyi SACCO</h1>
+      <span class="brand-sub">Admin Panel</span>
+    </div>
+    <div class="sidebar-nav">
+      <h:link outcome="/admin/dashboard.xhtml">
+        <h:graphicImage library="images" name="dashboard_icon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Dashboard
+      </h:link>
+      <h:link outcome="/admin/members.xhtml">
+        <h:graphicImage library="images" name="generic-users-group.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Members
+      </h:link>
+      <h:link outcome="/admin/transactions.xhtml">
+        <h:graphicImage library="images" name="savingsicon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Transactions
+      </h:link>
+      <h:link outcome="/admin/loans.xhtml">
+        <h:graphicImage library="images" name="acount_user_logo.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Loans
+      </h:link>
+      <h:link outcome="/admin/system-logs.xhtml">
+        <h:graphicImage library="images" name="system_admin_logo.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> System Logs
+      </h:link>
+    </div>
+    <div class="sidebar-footer">
+      <h:form>
+        <h:commandLink action="#{loginBean.logout}" styleClass="nav-btn" style="color:#f5c2c2; display:flex; align-items:center;">
+          <h:graphicImage library="images" name="logout.png" style="width:18px; height:18px; margin-right:10px;"/> Log Out
+        </h:commandLink>
+      </h:form>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">Admin Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <!-- Notification Bell -->
+        <h:link outcome="/admin/loans.xhtml" styleClass="notification-bell" style="position:relative; margin-right:20px; cursor:pointer; display:flex; align-items:center; text-decoration:none;">
+          <h:graphicImage library="images" name="bell.png" style="width:22px; height:22px;"/>
+          <h:panelGroup rendered="#{adminDashboardBean.summary.pendingApplicationsCount > 0}">
+            <span style="position:absolute; top:-5px; right:-8px; background:#dc3545; color:white; border-radius:50%; padding:2px 5px; font-size:10px; font-weight:bold;">
+              #{adminDashboardBean.summary.pendingApplicationsCount}
+            </span>
+          </h:panelGroup>
+        </h:link>
+        <!-- Profile Dropdown -->
+        <div class="profile-dropdown-wrapper">
+          <button class="profile-btn" onclick="toggleProfileMenu()" type="button">
+            <h:graphicImage library="images" name="generic-user.png" styleClass="profile-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"/>
+            <span><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+            <span class="dropdown-arrow">▾</span>
+          </button>
+          <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <span class="profile-role">System Administrator</span>
+              <span class="profile-role-tag">(Admin)</span>
+            </div>
+            <h:link outcome="/admin/my-profile.xhtml" styleClass="profile-menu-item">
+              <h:graphicImage library="images" name="generic-user.png" style="width:16px; height:16px; vertical-align:middle; margin-right:8px;"/> My Profile
             </h:link>
-            <h:link outcome="/admin/members.xhtml">
-                <i class="nav-icon">👥</i> Members
-            </h:link>
-            <h:link outcome="/admin/loans.xhtml">
-                <i class="nav-icon">📋</i> Loan Applications
-            </h:link>
-        </div>
-        <div class="sidebar-footer">
-            <h:form>
-                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
-                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
+            <h:form styleClass="profile-menu-form">
+              <h:commandLink action="#{loginBean.logout}" styleClass="profile-menu-item sign-out-btn">
+                <h:graphicImage library="images" name="logout.png" style="width:16px; height:16px; margin-right:8px;"/> Sign Out
+              </h:commandLink>
             </h:form>
+          </div>
         </div>
-    </nav>
-
-    <!-- Main -->
-    <div class="main-content">
-        <div class="topbar">
-            <span class="topbar-title">Admin Dashboard</span>
-            <span class="topbar-user">Admin: <h:outputText value="#{loginBean.currentUser.displayName}"/></span>
-        </div>
-
-        <div class="page-body">
-            <div class="stats-grid">
-                <div class="stat-card success">
-                    <span class="stat-label">Active Members</span>
-                    <div class="stat-value">
-                        <h:outputText value="#{adminDashboardBean.summary.totalActiveMembers}"/>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Total Savings Held</span>
-                    <div class="stat-value money">
-                        UGX <h:outputText value="#{adminDashboardBean.summary.totalSavingsHeld}">
-                            <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
-                        </h:outputText>
-                    </div>
-                </div>
-                <div class="stat-card danger">
-                    <span class="stat-label">Active Loans</span>
-                    <div class="stat-value">
-                        <h:outputText value="#{adminDashboardBean.summary.activeLoansCount}"/>
-                    </div>
-                </div>
-                <div class="stat-card accent">
-                    <span class="stat-label">Outstanding Loan Balance</span>
-                    <div class="stat-value money">
-                        UGX <h:outputText value="#{adminDashboardBean.summary.totalOutstandingLoanBalance}">
-                            <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
-                        </h:outputText>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Pending Applications</span>
-                    <div class="stat-value">
-                        <h:outputText value="#{adminDashboardBean.summary.pendingApplicationsCount}"/>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Nav Cards -->
-            <div class="grid-auto mt-8">
-                <div class="card">
-                    <div class="card-header">👥 Member Management</div>
-                    <p class="text-muted mb-4">Register new members, view all accounts, deactivate members.</p>
-                    <h:link outcome="/admin/members.xhtml" styleClass="btn btn-primary">Go to Members</h:link>
-                </div>
-                <div class="card">
-                    <div class="card-header">📋 Loan Applications</div>
-                    <p class="text-muted mb-4">Review pending loan applications, approve or reject them.</p>
-                    <h:link outcome="/admin/loans.xhtml" styleClass="btn btn-primary">Review Loans</h:link>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
+    <!-- Page Body -->
+    <div class="page-body">
+
+      <!-- Row 1: Transactions Today | Float | Total Members -->
+      <div class="stats-grid dash-top-row">
+        <div class="stat-card">
+          <span class="stat-label">Transactions | Today</span>
+          <div class="stat-value dash-txn-value">
+            <span class="dash-txn-icon"></span>
+            <h:outputText value="#{adminDashboardBean.summary.todayTransactionsCount}"/>
+          </div>
+        </div>
+        <div class="stat-card accent">
+          <span class="stat-label">My Float (Shs)</span>
+          <div class="stat-value">
+            <span class="float-icon">$</span>
+            UGX <h:outputText value="#{adminDashboardBean.summary.totalSavingsHeld}">
+              <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+            </h:outputText>
+          </div>
+          <span class="stat-sub-label">Refresh</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total Members</span>
+          <div class="members-card-content">
+            <span class="members-icon"></span>
+            <div class="members-count-col">
+              <div class="stat-value"><h:outputText value="#{adminDashboardBean.summary.totalMembers}"/></div>
+              <div class="members-gender">
+                <span>Male: <h:outputText value="#{adminDashboardBean.summary.maleMembersCount}"/></span>
+                <span>Female: <h:outputText value="#{adminDashboardBean.summary.femaleMembersCount}"/></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Active Members | Active Loans | Outstanding Balance | Pending -->
+      <div class="stats-grid">
+        <div class="stat-card success">
+          <span class="stat-label">Active Members</span>
+          <div class="stat-value"><h:outputText value="#{adminDashboardBean.summary.totalActiveMembers}"/></div>
+        </div>
+        <div class="stat-card danger">
+          <span class="stat-label">Active Loans</span>
+          <div class="stat-value"><h:outputText value="#{adminDashboardBean.summary.activeLoansCount}"/></div>
+        </div>
+        <div class="stat-card accent">
+          <span class="stat-label">Outstanding Loan Balance</span>
+          <div class="stat-value money">
+            UGX <h:outputText value="#{adminDashboardBean.summary.totalOutstandingLoanBalance}">
+              <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+            </h:outputText>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Pending Applications</span>
+          <div class="stat-value"><h:outputText value="#{adminDashboardBean.summary.pendingApplicationsCount}"/></div>
+        </div>
+      </div>
+
+      <!-- Row 3: Quick Nav (left) + Recent Logs (right) -->
+      <div class="dash-body-grid mt-8">
+
+        <!-- Quick Nav Cards -->
+        <div class="dash-nav-col">
+          <div class="grid-auto">
+            <h:link outcome="/admin/members.xhtml" styleClass="card clickable-card">
+              <div class="card-header">Member Management</div>
+              <p class="text-muted mb-4">Register new members, view all accounts, deactivate members.</p>
+              <span class="btn btn-primary">Go to Members</span>
+            </h:link>
+            <h:link outcome="/admin/loans.xhtml" styleClass="card clickable-card">
+              <div class="card-header">Loan Applications</div>
+              <p class="text-muted mb-4">Review pending loan applications, approve or reject them.</p>
+              <span class="btn btn-primary">Review Loans</span>
+            </h:link>
+            <h:link outcome="/admin/transactions.xhtml" styleClass="card clickable-card">
+              <div class="card-header">Transactions</div>
+              <p class="text-muted mb-4">View all savings deposits and withdrawals across all accounts.</p>
+              <span class="btn btn-primary">View Transactions</span>
+            </h:link>
+            <h:link outcome="/admin/system-logs.xhtml" styleClass="card clickable-card">
+              <div class="card-header">System Logs</div>
+              <p class="text-muted mb-4">View all system activity and audit trail entries.</p>
+              <span class="btn btn-primary">View Logs</span>
+            </h:link>
+          </div>
+        </div>
+
+        <!-- Recent System Logs -->
+        <div class="dash-logs-col">
+          <div class="card logs-card">
+            <div class="card-header" style="display:flex; justify-content:space-between; align-items:center;">
+              <span>Recent System Logs</span>
+              <h:link outcome="/admin/system-logs.xhtml" styleClass="logs-all-link">All</h:link>
+            </div>
+            <div class="logs-list">
+              <h:dataTable value="#{adminDashboardBean.recentLogs}" var="log" styleClass="logs-table">
+                <h:column>
+                  <div class="log-entry">
+                    <span class="log-dot log-dot-blue">●</span>
+                    <div class="log-entry-body">
+                      <div class="log-entry-top">
+                        <span class="log-date"><h:outputText value="#{log.createdAtDisplay}"/></span>
+                        <h:outputText value="Successful" styleClass="log-badge log-success" rendered="#{log.status == 'SUCCESSFUL'}"/>
+                        <h:outputText value="Failed"     styleClass="log-badge log-failed"  rendered="#{log.status == 'FAILED'}"/>
+                        <h:outputText value="Info"       styleClass="log-badge log-info"    rendered="#{log.status == 'INFO'}"/>
+                        <h:outputText value="(M)" styleClass="log-type-hint" rendered="#{log.actorType == 'M'}"/>
+                        <h:outputText value="(A)" styleClass="log-type-hint" rendered="#{log.actorType == 'A'}"/>
+                      </div>
+                      <div class="log-entry-action">
+                        <h:outputText value="#{log.ipAddress}" rendered="#{not empty log.ipAddress}"/>
+                        <h:outputText value="#{not empty log.ipAddress ? ' — ' : ''}"/>
+                        <h:outputText value="#{log.action}"/>
+                        <h:outputText value=": #{log.actorName}" rendered="#{not empty log.actorName}"/>
+                      </div>
+                    </div>
+                  </div>
+                </h:column>
+              </h:dataTable>
+              <h:panelGroup rendered="#{empty adminDashboardBean.recentLogs}">
+                <div class="empty-state">No log entries yet.</div>
+              </h:panelGroup>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Row 4: Members Table (full width) -->
+      <div class="mt-8">
+        <div class="card" style="padding:0; overflow:hidden;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:14px 20px; border-bottom:1px solid #e0e0e0; background:#f8f9fa;">
+            <span style="font-weight:600; color:#333; font-size:.95rem;">Frequent Members</span>
+            <span>
+              <a href="#" style="color:#0056b3; font-size:12px; text-decoration:none; margin-right:8px; border:1px solid #cce5ff; padding:4px 10px; border-radius:4px; background:#e6f2ff;">Get Excel</a>
+              <a href="#" style="color:#0056b3; font-size:12px; text-decoration:none; border:1px solid #cce5ff; padding:4px 10px; border-radius:4px; background:#e6f2ff;">Get Doc</a>
+            </span>
+          </div>
+          <div style="overflow-x:auto;">
+            <h:dataTable value="#{adminMembersBean.allMembers}" var="member"
+                         style="width:100%; border-collapse:collapse; font-size:.88rem;" rows="5">
+              <h:column>
+                <f:facet name="header"><div style="padding:12px 16px; background:#2980b9; color:#fff; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;">#</div></f:facet>
+                <div style="padding:11px 16px; border-bottom:1px solid #eee;">#{member.id}</div>
+              </h:column>
+              <h:column>
+                <f:facet name="header"><div style="padding:12px 16px; background:#2980b9; color:#fff; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;">Name</div></f:facet>
+                <div style="padding:11px 16px; border-bottom:1px solid #eee; font-weight:500;">#{member.fullName}</div>
+              </h:column>
+              <h:column>
+                <f:facet name="header"><div style="padding:12px 16px; background:#2980b9; color:#fff; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;">Contact</div></f:facet>
+                <div style="padding:11px 16px; border-bottom:1px solid #eee;">#{member.phoneNumber}</div>
+              </h:column>
+              <h:column>
+                <f:facet name="header"><div style="padding:12px 16px; background:#2980b9; color:#fff; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;">Account No</div></f:facet>
+                <div style="padding:11px 16px; border-bottom:1px solid #eee;"><span style="background:#eef2f5; padding:3px 8px; border-radius:4px; font-family:monospace; color:#444; font-size:.82rem;">#{member.membershipNumber}</span></div>
+              </h:column>
+              <h:column>
+                <f:facet name="header"><div style="padding:12px 16px; background:#2980b9; color:#fff; font-weight:600; font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; text-align:center;">Action</div></f:facet>
+                <div style="padding:11px 16px; border-bottom:1px solid #eee; text-align:center;">
+                  <h:link outcome="/admin/members.xhtml" style="background:#0056b3; color:white; padding:5px 14px; border-radius:4px; text-decoration:none; font-size:.8rem; font-weight:600; display:inline-block;">View</h:link>
+                </div>
+              </h:column>
+            </h:dataTable>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
+
+<script>
+  function toggleProfileMenu() {
+    document.getElementById('profileDropdown').classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    var wrapper = document.querySelector('.profile-dropdown-wrapper');
+    if (wrapper &amp;&amp; !wrapper.contains(e.target)) {
+      var menu = document.getElementById('profileDropdown');
+      if (menu) menu.classList.remove('open');
+    }
+  });
+</script>
 </h:body>
 </html>

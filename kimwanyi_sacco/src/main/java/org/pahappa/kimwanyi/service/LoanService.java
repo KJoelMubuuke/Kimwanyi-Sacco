@@ -9,6 +9,7 @@ import org.pahappa.kimwanyi.model.Loan;
 import org.pahappa.kimwanyi.model.LoanApplication;
 import org.pahappa.kimwanyi.model.LoanRepayment;
 import org.pahappa.kimwanyi.model.Member;
+import org.pahappa.kimwanyi.service.AuditLogService;
 import org.pahappa.kimwanyi.util.HibernateUtil;
 
 import java.math.BigDecimal;
@@ -84,7 +85,9 @@ public class LoanService {
      */
     public Loan approveLoan(Long applicationId, Long adminId) {
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Admin admin = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
 
             LoanApplication application = session.get(LoanApplication.class, applicationId);
@@ -95,7 +98,7 @@ public class LoanService {
                 throw new IllegalStateException("Only PENDING applications can be approved");
             }
 
-            Admin admin = session.get(Admin.class, adminId);
+            admin = session.get(Admin.class, adminId);
             if (admin == null) {
                 throw new IllegalStateException("Admin not found: " + adminId);
             }
@@ -123,11 +126,18 @@ public class LoanService {
             session.persist(loan);
 
             tx.commit();
+            AuditLogService.log("Loan Approved",
+                    "Application #" + applicationId + " | Amount: UGX " + principal,
+                    admin.getFullName(), "A", "SUCCESSFUL");
             return loan;
 
         } catch (Exception e) {
             if (tx != null) tx.rollback();
+            AuditLogService.log("Loan Approval FAILED", "Application #" + applicationId,
+                    admin != null ? admin.getFullName() : "Admin", "A", "FAILED");
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -155,6 +165,9 @@ public class LoanService {
         application.setRejectionReason(rejectionReason);
 
         loanApplicationDAO.update(application);
+        AuditLogService.log("Loan Rejected",
+                "Application #" + applicationId + " | Reason: " + rejectionReason,
+                admin.getFullName(), "A", "INFO");
         return application;
     }
 

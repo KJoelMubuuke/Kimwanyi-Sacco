@@ -1,128 +1,125 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-    <title>Member Dashboard — Kimwanyi SACCO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <h:outputStylesheet library="css" name="sacco.css"/>
+  <title>Member Dashboard — Kimwanyi SACCO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
 </h:head>
 <h:body>
 <div class="layout-wrapper">
 
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="sidebar-brand">
-            <h1>🌿 Kimwanyi SACCO</h1>
-            <span class="brand-sub">Member Portal</span>
-        </div>
-        <div class="sidebar-nav">
-            <h:link outcome="/member/dashboard.xhtml" styleClass="active">
-                <i class="nav-icon">⊞</i> Dashboard
-            </h:link>
-            <h:link outcome="/member/savings.xhtml">
-                <i class="nav-icon">💰</i> Savings
-            </h:link>
-            <h:link outcome="/member/loans.xhtml">
-                <i class="nav-icon">📋</i> Loans
-            </h:link>
-            <h:link outcome="/member/profile.xhtml">
-                <i class="nav-icon">👤</i> My Profile
-            </h:link>
-        </div>
-        <div class="sidebar-footer">
-            <h:form>
-                <h:commandButton value="⇤  Log Out" action="#{loginBean.logout}"
-                                 styleClass="nav-btn" style="color:#f5c2c2;"/>
-            </h:form>
-        </div>
-    </nav>
-
-    <!-- Main -->
-    <div class="main-content">
-        <div class="topbar">
-            <span class="topbar-title">Dashboard</span>
-            <span class="topbar-user">Welcome, <h:outputText value="#{loginBean.currentUser.displayName}"/></span>
-        </div>
-
-        <div class="page-body">
-            <!-- Balance Stat -->
-            <div class="stats-grid">
-                <div class="stat-card success">
-                    <span class="stat-label">Current Savings Balance</span>
-                    <div class="balance-display">
-                        <span class="balance-currency">UGX</span>
-                        <span class="balance-amount">
-                            <h:outputText value="#{memberDashboardBean.balance}">
-                                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
-                            </h:outputText>
-                        </span>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <span class="stat-label">Minimum Balance Required</span>
-                    <div class="stat-value money">UGX 20,000</div>
-                </div>
-                <div class="stat-card accent">
-                    <span class="stat-label">Savings Interest Rate</span>
-                    <div class="stat-value">5% p.a.</div>
-                </div>
-            </div>
-
-            <!-- Recent Transactions -->
-            <div class="card">
-                <div class="card-header">Recent Transactions</div>
-                <div class="table-wrap">
-                    <h:dataTable value="#{memberDashboardBean.statement}" var="txn"
-                                 styleClass="sacco-table" rowClasses="txn-row">
-                        <h:column>
-                            <f:facet name="header">Date</f:facet>
-                            <h:outputText value="#{txn.createdAt}">
-                                <f:convertDateTime pattern="dd-MMM-yyyy HH:mm"/>
-                            </h:outputText>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Type</f:facet>
-                            <h:outputText value="#{txn.type}" styleClass="badge badge-success"
-                                          rendered="#{txn.type == 'DEPOSIT'}"/>
-                            <h:outputText value="#{txn.type}" styleClass="badge badge-warn"
-                                          rendered="#{txn.type == 'WITHDRAWAL'}"/>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Amount (UGX)</f:facet>
-                            <h:outputText value="#{txn.amount}">
-                                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
-                            </h:outputText>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Balance After (UGX)</f:facet>
-                            <h:outputText value="#{txn.balanceAfter}">
-                                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
-                            </h:outputText>
-                        </h:column>
-                        <h:column>
-                            <f:facet name="header">Description</f:facet>
-                            <h:outputText value="#{txn.description}"/>
-                        </h:column>
-                    </h:dataTable>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="mt-8 grid-auto">
-                <div class="card">
-                    <div class="card-header">Quick Actions</div>
-                    <h:link outcome="/member/savings.xhtml" styleClass="btn btn-primary" style="margin-right:10px;">
-                        💰 Deposit / Withdraw
-                    </h:link>
-                    <h:link outcome="/member/loans.xhtml" styleClass="btn btn-outline" style="margin-top:10px;">
-                        📋 Apply for Loan
-                    </h:link>
-                </div>
-            </div>
-        </div>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1><h:graphicImage library="images" name="site-icon.png" style="width:28px; height:28px; vertical-align:middle; margin-right:8px;"/> Kimwanyi SACCO</h1>
+      <span class="brand-sub">Member Portal</span>
     </div>
+    <div class="sidebar-nav">
+      <h:link outcome="/member/dashboard.xhtml" styleClass="active">
+        <h:graphicImage library="images" name="dashboard_icon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Dashboard
+      </h:link>
+      <h:link outcome="/member/savings.xhtml">
+        <h:graphicImage library="images" name="savingsicon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Savings
+      </h:link>
+      <h:link outcome="/member/loans.xhtml">
+        <h:graphicImage library="images" name="generic-user.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Loans
+      </h:link>
+      <h:link outcome="/member/profile.xhtml">
+        <h:graphicImage library="images" name="generic-user.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px; border-radius:50%;"/> My Profile
+      </h:link>
+    </div>
+    <div class="sidebar-footer">
+      <h:form>
+        <h:commandLink action="#{loginBean.logout}" styleClass="nav-btn" style="color:#f5c2c2; display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:18px; height:18px; margin-right:10px;"/> Log Out</h:commandLink>
+      </h:form>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="topbar">
+      <span class="topbar-title">Dashboard</span>
+      <div class="topbar-user" style="display:flex; align-items:center;"><h:graphicImage library="images" name="generic-user.png" style="width:32px; height:32px; border-radius:50%; margin-right:10px; object-fit:cover; border: 2px solid #ddd;"/><span>Welcome, <h:outputText value="#{loginBean.currentUser.displayName}"/></span></div>
+    </div>
+
+    <div class="page-body">
+      <!-- Balance Stat -->
+      <div class="stats-grid">
+        <div class="stat-card success">
+          <span class="stat-label">Current Savings Balance</span>
+          <div class="balance-display">
+            <span class="balance-currency">UGX</span>
+            <span class="balance-amount">
+              <h:outputText value="#{memberDashboardBean.balance}">
+                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+              </h:outputText>
+            </span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Minimum Balance Required</span>
+          <div class="stat-value money">UGX 20,000</div>
+        </div>
+        <div class="stat-card accent">
+          <span class="stat-label">Savings Interest Rate</span>
+          <div class="stat-value">5% p.a.</div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="card">
+        <div class="card-header">Recent Transactions</div>
+        <div class="table-wrap">
+          <h:dataTable value="#{memberDashboardBean.statement}" var="txn"
+                 styleClass="sacco-table" rowClasses="txn-row">
+            <h:column>
+              <f:facet name="header">Date</f:facet>
+              <h:outputText value="#{txn.createdAtDisplay}" />
+            </h:column>
+            <h:column>
+              <f:facet name="header">Type</f:facet>
+              <h:outputText value="#{txn.type}" styleClass="badge badge-success"
+                     rendered="#{txn.type == 'DEPOSIT'}"/>
+              <h:outputText value="#{txn.type}" styleClass="badge badge-warn"
+                     rendered="#{txn.type == 'WITHDRAWAL'}"/>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Amount (UGX)</f:facet>
+              <h:outputText value="#{txn.amount}">
+                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+              </h:outputText>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Balance After (UGX)</f:facet>
+              <h:outputText value="#{txn.balanceAfter}">
+                <f:convertNumber groupingUsed="true" minFractionDigits="2"/>
+              </h:outputText>
+            </h:column>
+            <h:column>
+              <f:facet name="header">Description</f:facet>
+              <h:outputText value="#{txn.description}"/>
+            </h:column>
+          </h:dataTable>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="mt-8 grid-auto">
+        <div class="card">
+          <div class="card-header">Quick Actions</div>
+          <h:link outcome="/member/savings.xhtml" styleClass="btn btn-primary" style="margin-right:10px;">
+             Deposit / Withdraw
+          </h:link>
+          <h:link outcome="/member/loans.xhtml" styleClass="btn btn-outline" style="margin-top:10px;">
+             Apply for Loan
+          </h:link>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>
 </h:body>

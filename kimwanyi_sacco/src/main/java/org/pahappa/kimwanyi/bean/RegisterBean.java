@@ -15,6 +15,7 @@ public class RegisterBean {
 
     private String nationalId;
     private String fullName;
+    private String gender;
     private String phoneNumber;
     private String email;
     private String password;
@@ -27,7 +28,7 @@ public class RegisterBean {
             return null;
         }
         try {
-            memberService.register(nationalId, fullName, phoneNumber, email, password);
+            memberService.register(nationalId, fullName, gender, phoneNumber, email, password);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Account created successfully! Please log in.", null));
@@ -45,6 +46,9 @@ public class RegisterBean {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }

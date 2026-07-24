@@ -2,6 +2,7 @@ package org.pahappa.kimwanyi.bean;
 
 import org.pahappa.kimwanyi.dao.MemberDAO;
 import org.pahappa.kimwanyi.model.Member;
+import org.pahappa.kimwanyi.service.AuditLogService;
 import org.pahappa.kimwanyi.service.MemberService;
 
 import javax.faces.application.FacesMessage;
@@ -21,6 +22,7 @@ public class AdminMembersBean implements Serializable {
     // Registration form fields
     private String nationalId;
     private String fullName;
+    private String gender;
     private String phoneNumber;
     private String email;
     private String password;
@@ -31,12 +33,12 @@ public class AdminMembersBean implements Serializable {
 
     public String registerMember() {
         try {
-            memberService.register(nationalId, fullName, phoneNumber, email, password);
+            memberService.register(nationalId, fullName, gender, phoneNumber, email, password);
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Member '" + fullName + "' registered successfully.", null));
             // Clear form
-            nationalId = null; fullName = null;
+            nationalId = null; fullName = null; gender = null;
             phoneNumber = null; email = null; password = null;
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null,
@@ -48,6 +50,7 @@ public class AdminMembersBean implements Serializable {
     public String deactivate(Long memberId) {
         try {
             memberService.deactivate(memberId);
+            AuditLogService.log("Member Deactivated", "Member ID: " + memberId, "Admin", "A", "INFO");
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Member account deactivated.", null));
         } catch (Exception e) {
@@ -60,6 +63,7 @@ public class AdminMembersBean implements Serializable {
     public String activate(Long memberId) {
         try {
             memberService.activate(memberId);
+            AuditLogService.log("Member Activated", "Member ID: " + memberId, "Admin", "A", "SUCCESSFUL");
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO, "Member account activated.", null));
         } catch (Exception e) {
@@ -75,6 +79,9 @@ public class AdminMembersBean implements Serializable {
 
     public String getFullName() { return fullName; }
     public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
 
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }

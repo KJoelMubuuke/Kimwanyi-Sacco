@@ -1,107 +1,151 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
 <h:head>
-    <title>Register — Kimwanyi SACCO</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <h:outputStylesheet library="css" name="sacco.css"/>
+  <title>Register — Kimwanyi SACCO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
 </h:head>
 <h:body styleClass="auth-page">
-    <div class="auth-card" style="max-width:520px;">
-        <div class="auth-logo">
-            <h1>🌿 Kimwanyi SACCO</h1>
-            <p>Member Registration</p>
+  <div class="auth-card" style="max-width:900px; min-height: 550px;">
+    <!-- Left side: Geometric pattern + company branding -->
+    <div class="auth-side" style="width: 35%;">
+      <div class="auth-side-overlap"></div>
+      <div class="auth-side-content">
+        <div class="auth-side-brand">
+          <h:graphicImage library="images" name="site-icon.png" style="width:48px; height:48px; display:block; margin:0 auto 10px auto; border-radius:50%; background:#fff; padding:4px;"/>
+          <div class="auth-side-brand-name">Kimwanyi SACCO</div>
+          <div class="auth-side-brand-sub">Community Savings &amp; Credit Cooperative</div>
         </div>
-        <h2>Create Your Account</h2>
-
-        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
-                    infoClass="sacco-msg info" showDetail="true"/>
-
-        <h:form id="registerForm">
-
-            <!-- National ID -->
-            <div class="form-group">
-                <h:outputLabel for="nationalId" value="National ID *"/>
-                <h:inputText id="nationalId" value="#{registerBean.nationalId}"
-                             required="true"
-                             requiredMessage="National ID is required."
-                             validatorMessage="National ID must be 14 alphanumeric characters (e.g. CM9000123456HKWF)."
-                             placeholder="e.g. CM9000123456HKWF" maxlength="14">
-                    <f:validateRegex pattern="[A-Za-z0-9]{14}"/>
-                </h:inputText>
-                <h:message for="nationalId" styleClass="field-error"/>
-            </div>
-
-            <!-- Full Name -->
-            <div class="form-group">
-                <h:outputLabel for="fullName" value="Full Name *"/>
-                <h:inputText id="fullName" value="#{registerBean.fullName}"
-                             required="true"
-                             requiredMessage="Full name is required."
-                             validatorMessage="Full name must be 2–120 characters, letters and spaces only."
-                             placeholder="e.g. John Doe" maxlength="120">
-                    <f:validateLength minimum="2" maximum="120"/>
-                    <f:validateRegex pattern="[A-Za-z ]{2,120}"/>
-                </h:inputText>
-                <h:message for="fullName" styleClass="field-error"/>
-            </div>
-
-            <!-- Phone Number -->
-            <div class="form-group">
-                <h:outputLabel for="phone" value="Phone Number"/>
-                <h:inputText id="phone" value="#{registerBean.phoneNumber}"
-                             validatorMessage="Enter a valid Uganda phone number (e.g. 0771234567 or +256771234567)."
-                             placeholder="+256771234567 or 0771234567" maxlength="20">
-                    <f:validateRegex pattern="(\+256|0)[0-9]{9}"/>
-                </h:inputText>
-                <h:message for="phone" styleClass="field-error"/>
-            </div>
-
-            <!-- Email -->
-            <div class="form-group">
-                <h:outputLabel for="email" value="Email Address *"/>
-                <h:inputText id="email" value="#{registerBean.email}"
-                             required="true"
-                             requiredMessage="Email address is required."
-                             validatorMessage="Enter a valid email address (e.g. name@example.com)."
-                             placeholder="name@example.com" maxlength="120">
-                    <f:validateRegex pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
-                </h:inputText>
-                <h:message for="email" styleClass="field-error"/>
-            </div>
-
-            <!-- Password -->
-            <div class="form-group">
-                <h:outputLabel for="pwd" value="Password *"/>
-                <h:inputSecret id="pwd" value="#{registerBean.password}"
-                               required="true"
-                               requiredMessage="Password is required."
-                               validatorMessage="Password must be at least 8 characters and contain letters and numbers."
-                               placeholder="Min. 8 characters" maxlength="72">
-                    <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
-                </h:inputSecret>
-                <h:message for="pwd" styleClass="field-error"/>
-            </div>
-
-            <!-- Confirm Password -->
-            <div class="form-group">
-                <h:outputLabel for="confirmPwd" value="Confirm Password *"/>
-                <h:inputSecret id="confirmPwd" value="#{registerBean.confirmPassword}"
-                               required="true"
-                               requiredMessage="Please confirm your password."
-                               placeholder="Repeat password" maxlength="72"/>
-                <h:message for="confirmPwd" styleClass="field-error"/>
-            </div>
-
-            <h:commandButton id="registerBtn" value="Create Account" action="#{registerBean.register}"
-                             styleClass="btn btn-primary btn-full" style="margin-top:6px;"/>
-        </h:form>
-
-        <div class="auth-footer">
-            Already a member? <h:link value="Sign in" outcome="/login.xhtml"/>
-        </div>
+        <div class="auth-side-welcome">JOIN US</div>
+        <div class="auth-side-pill">REGISTER</div>
+      </div>
     </div>
+
+    <!-- Right side: Registration form -->
+    <div class="auth-form-side" style="padding: 40px 50px;">
+      <div class="auth-form-header" style="margin-bottom: 25px;">
+        <h2 style="font-size: 1.5rem;">Create Your Account</h2>
+        <p class="text-muted" style="margin-top:5px;">Fill in the details below to join the SACCO.</p>
+      </div>
+
+      <h:form id="registerForm" prependId="false" pt:autocomplete="off" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+              infoClass="sacco-msg info" />
+
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 0 20px;">
+          <!-- National ID -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputText id="nationalId" value="#{registerBean.nationalId}"
+                   required="true" requiredMessage="National ID is required."
+                   validatorMessage="Must be 14 alphanumeric chars."
+                   pt:placeholder="National ID *" maxlength="14">
+              <f:validateRegex pattern="[A-Za-z0-9]{14}"/>
+            </h:inputText>
+            <h:message for="nationalId" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Full Name -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputText id="fullName" value="#{registerBean.fullName}"
+                   required="true" requiredMessage="Full name is required."
+                   validatorMessage="2–120 chars, letters only."
+                   pt:placeholder="Full Name *" maxlength="120">
+              <f:validateLength minimum="2" maximum="120"/>
+              <f:validateRegex pattern="[A-Za-z ]{2,120}"/>
+            </h:inputText>
+            <h:message for="fullName" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Gender -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:selectOneMenu id="gender" value="#{registerBean.gender}"
+                     required="true" requiredMessage="Gender is required."
+                     style="width: 100%; padding: 10px 10px 10px 35px; border: none; border-bottom: 2px solid #e0e4e8; background: transparent; font-size: .95rem; color: var(--text-main); outline: none;">
+              <f:selectItem itemLabel="Gender *" itemValue="" noSelectionOption="true"/>
+              <f:selectItem itemLabel="Male" itemValue="Male"/>
+              <f:selectItem itemLabel="Female" itemValue="Female"/>
+            </h:selectOneMenu>
+            <h:message for="gender" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputText id="phone" value="#{registerBean.phoneNumber}"
+                   validatorMessage="Valid Uganda phone required."
+                   pt:placeholder="Phone Number" maxlength="20">
+              <f:validateRegex pattern="(\+256|0)[0-9]{9}"/>
+            </h:inputText>
+            <h:message for="phone" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Email -->
+          <div class="auth-input-group" style="grid-column: span 2;">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputText id="email" value="#{registerBean.email}"
+                   required="true" requiredMessage="Email address is required."
+                   validatorMessage="Valid email required."
+                   pt:placeholder="Email Address *" maxlength="120"
+                   pt:autocomplete="off">
+              <f:validateRegex pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}"/>
+            </h:inputText>
+            <h:message for="email" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Password -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-lock.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputSecret id="pwd" value="#{registerBean.password}"
+                    required="true" requiredMessage="Password required."
+                    validatorMessage="Min 8 chars, letters + numbers."
+                    pt:placeholder="Password *" maxlength="72"
+                    pt:autocomplete="new-password">
+              <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
+            </h:inputSecret>
+            <h:message for="pwd" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="auth-input-group">
+            <span class="auth-input-icon">
+              <h:graphicImage library="images" name="input-lock.png" style="width:16px; height:16px; opacity:0.6;"/>
+            </span>
+            <h:inputSecret id="confirmPwd" value="#{registerBean.confirmPassword}"
+                    required="true" requiredMessage="Please confirm."
+                    pt:placeholder="Confirm Password *" maxlength="72"
+                    pt:autocomplete="new-password"/>
+            <h:message for="confirmPwd" styleClass="field-error" style="position:absolute; bottom:-18px; left:0; font-size:11px;"/>
+          </div>
+        </div>
+
+        <div class="auth-actions" style="justify-content: center; margin-top: 25px;">
+          <h:commandButton id="registerBtn" value="CREATE ACCOUNT" action="#{registerBean.register}" styleClass="auth-btn" style="padding: 12px 40px;"/>
+        </div>
+      </h:form>
+
+      <div class="auth-footer" style="padding-top: 15px;">
+        <span>Already a member?</span>
+        <h:link value="Sign In" outcome="/login.xhtml"/>
+      </div>
+    </div>
+  </div>
 </h:body>
 </html>

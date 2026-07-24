@@ -4,6 +4,8 @@ import org.hibernate.Session;
 import org.pahappa.kimwanyi.util.HibernateUtil;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Admin dashboard - the brief's "Admin dashboard showing summary counts
@@ -41,12 +43,40 @@ public class DashboardService {
                             "SELECT COUNT(la) FROM LoanApplication la WHERE la.status = 'PENDING'", Long.class)
                     .uniqueResult();
 
+            // Today's transactions (midnight to now)
+            LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+            LocalDateTime now = LocalDateTime.now();
+            Long todayTransactionsCount = session.createQuery(
+                            "SELECT COUNT(t) FROM Transaction t WHERE t.createdAt >= :start AND t.createdAt <= :end",
+                            Long.class)
+                    .setParameter("start", todayStart)
+                    .setParameter("end", now)
+                    .uniqueResult();
+
+            // Total members
+            Long totalMembers = session.createQuery(
+                            "SELECT COUNT(m) FROM Member m", Long.class)
+                    .uniqueResult();
+
+            Long maleMembersCountResult = session.createQuery(
+                            "SELECT COUNT(m) FROM Member m WHERE m.gender = 'Male'", Long.class)
+                    .uniqueResult();
+            Long femaleMembersCountResult = session.createQuery(
+                            "SELECT COUNT(m) FROM Member m WHERE m.gender = 'Female'", Long.class)
+                    .uniqueResult();
+            long maleMembersCount   = maleMembersCountResult   != null ? maleMembersCountResult   : 0L;
+            long femaleMembersCount = femaleMembersCountResult != null ? femaleMembersCountResult : 0L;
+
             return new DashboardSummary(
-                    totalActiveMembers != null ? totalActiveMembers : 0,
-                    totalSavingsHeld != null ? totalSavingsHeld : BigDecimal.ZERO,
-                    activeLoansCount != null ? activeLoansCount : 0,
+                    totalActiveMembers  != null ? totalActiveMembers  : 0,
+                    totalSavingsHeld    != null ? totalSavingsHeld    : BigDecimal.ZERO,
+                    activeLoansCount    != null ? activeLoansCount    : 0,
                     totalOutstandingLoanBalance != null ? totalOutstandingLoanBalance : BigDecimal.ZERO,
-                    pendingApplicationsCount != null ? pendingApplicationsCount : 0
+                    pendingApplicationsCount    != null ? pendingApplicationsCount    : 0,
+                    todayTransactionsCount      != null ? todayTransactionsCount      : 0,
+                    totalMembers        != null ? totalMembers        : 0,
+                    maleMembersCount,
+                    femaleMembersCount
             );
         }
     }

@@ -3,6 +3,8 @@ package org.pahappa.kimwanyi.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 
 @Entity
 @Table(name = "loan_applications")
@@ -74,4 +76,12 @@ public class LoanApplication {
 
     public Loan getLoan() { return loan; }
     public void setLoan(Loan loan) { this.loan = loan; }
+
+    private static final DateTimeFormatter DISPLAY_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
+    public String getAppliedAtDisplay() {
+        return appliedAt != null ? appliedAt.format(DISPLAY_FORMAT) : "";
+    }
+    public String getReviewedAtDisplay() {
+        return reviewedAt != null ? reviewedAt.format(DISPLAY_FORMAT) : "";
+    }
 }

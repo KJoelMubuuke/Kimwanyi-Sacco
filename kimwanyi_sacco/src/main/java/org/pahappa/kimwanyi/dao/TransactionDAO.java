@@ -10,13 +10,16 @@ public class TransactionDAO {
 
     public void save(Transaction transaction) {
         org.hibernate.Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.persist(transaction);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -32,6 +35,13 @@ public class TransactionDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             return session.createQuery("FROM Transaction t WHERE t.savingsAccount.member.id = :memberId ORDER BY t.createdAt DESC", Transaction.class)
                     .setParameter("memberId", memberId)
+                    .list();
+        }
+    }
+
+    public List<Transaction> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Transaction t ORDER BY t.createdAt DESC", Transaction.class)
                     .list();
         }
     }

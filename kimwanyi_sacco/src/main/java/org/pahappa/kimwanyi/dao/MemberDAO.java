@@ -11,13 +11,16 @@ public class MemberDAO {
 
     public void save(Member member) {
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.persist(member);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 
@@ -57,15 +60,26 @@ public class MemberDAO {
         }
     }
 
+    public List<Member> searchByName(String nameQuery) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            return session.createQuery("FROM Member m WHERE lower(m.fullName) LIKE lower(:nameQuery)", Member.class)
+                    .setParameter("nameQuery", "%" + nameQuery + "%")
+                    .list();
+        }
+    }
+
     public void update(Member member) {
         Transaction tx = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
             tx = session.beginTransaction();
             session.merge(member);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) tx.rollback();
             throw e;
+        } finally {
+            session.close();
         }
     }
 }

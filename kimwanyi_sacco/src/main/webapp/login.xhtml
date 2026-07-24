@@ -1,44 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:f="http://java.sun.com/jsf/core">
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
 <h:head>
-    <title>Kimwanyi SACCO — Login</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <h:outputStylesheet library="css" name="sacco.css"/>
+  <title>Kimwanyi SACCO — Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
 </h:head>
 <h:body styleClass="auth-page">
-    <div class="auth-card">
-        <div class="auth-logo">
-            <h1>🌿 Kimwanyi SACCO</h1>
-            <p>Community Savings &amp; Credit Cooperative</p>
+  <div class="auth-card">
+    <!-- Left side: Geometric pattern + company branding -->
+    <div class="auth-side">
+      <div class="auth-side-overlap"></div>
+      <div class="auth-side-content">
+        <div class="auth-side-brand">
+          <h:graphicImage library="images" name="site-icon.png" style="width:48px; height:48px; display:block; margin:0 auto 10px auto; border-radius:50%; background:#fff; padding:4px;"/>
+          <div class="auth-side-brand-name">Kimwanyi SACCO</div>
+          <div class="auth-side-brand-sub">Community Savings &amp; Credit Cooperative</div>
         </div>
-        <h2>Sign In to Your Account</h2>
-
-        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
-                    infoClass="sacco-msg info" warnClass="sacco-msg warn" showDetail="true"/>
-
-        <h:form id="loginForm">
-            <div class="form-group">
-                <h:outputLabel for="identifier" value="National ID / Email / Admin Username"/>
-                <h:inputText id="identifier" value="#{loginBean.identifier}"
-                             required="true" requiredMessage="Please enter your National ID or email."
-                             placeholder="e.g. CM9000123456HKWF or name@email.com"/>
-            </div>
-            <div class="form-group">
-                <h:outputLabel for="password" value="Password"/>
-                <h:inputSecret id="password" value="#{loginBean.password}"
-                               required="true" requiredMessage="Password is required."
-                               placeholder="••••••••"/>
-            </div>
-            <h:commandButton id="loginBtn" value="Sign In" action="#{loginBean.login}"
-                             styleClass="btn btn-primary btn-full" style="margin-top:8px;"/>
-        </h:form>
-
-        <div class="auth-footer">
-            New member? <h:link value="Create an account" outcome="/register.xhtml"/>
-        </div>
+      </div>
     </div>
+
+    <!-- Right side: Login form -->
+    <div class="auth-form-side">
+      <div class="auth-form-header">
+        <div class="auth-avatar">
+          <h:graphicImage library="images" name="input-user-white.png" style="width:36px; height:36px;"/>
+        </div>
+        <h2>LOGIN</h2>
+      </div>
+
+      <h:form id="loginForm">
+        <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+              infoClass="sacco-msg info" warnClass="sacco-msg warn" />
+
+        <div class="auth-input-group">
+          <span class="auth-input-icon">
+            <h:graphicImage library="images" name="input-user.png" style="width:16px; height:16px; opacity:0.6;"/>
+          </span>
+          <h:inputText id="identifier" value="#{loginBean.identifier}"
+                 required="true" requiredMessage="Please enter your email or username."
+                 pt:placeholder="Email / Username"/>
+        </div>
+
+        <div class="auth-input-group">
+          <span class="auth-input-icon">
+            <h:graphicImage library="images" name="input-lock.png" style="width:16px; height:16px; opacity:0.6;"/>
+          </span>
+          <h:inputSecret id="password" value="#{loginBean.password}"
+                  required="true" requiredMessage="Password is required."
+                  pt:placeholder="Password"/>
+        </div>
+
+        <div class="auth-actions">
+          <span></span>
+          <h:commandButton id="loginBtn" value="LOGIN" action="#{loginBean.login}" styleClass="auth-btn"/>
+        </div>
+      </h:form>
+
+      <div class="auth-footer">
+        <span>New member?</span>
+        <h:link value="Create an account" outcome="/register.xhtml"/>
+      </div>
+    </div>
+  </div>
 </h:body>
 </html>

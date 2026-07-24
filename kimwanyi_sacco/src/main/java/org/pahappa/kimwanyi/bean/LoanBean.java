@@ -4,6 +4,7 @@ import org.pahappa.kimwanyi.dao.LoanApplicationDAO;
 import org.pahappa.kimwanyi.dao.LoanDAO;
 import org.pahappa.kimwanyi.model.Loan;
 import org.pahappa.kimwanyi.model.LoanApplication;
+import org.pahappa.kimwanyi.service.AuditLogService;
 import org.pahappa.kimwanyi.service.LoanService;
 
 import javax.faces.application.FacesMessage;
@@ -35,6 +36,9 @@ public class LoanBean implements Serializable {
         try {
             Long memberId = loginBean.getCurrentUser().getUserId();
             loanService.applyForLoan(memberId, requestedAmount, reason);
+            AuditLogService.log("Loan Application",
+                    "UGX " + requestedAmount + " - " + reason,
+                    loginBean.getCurrentUser().getDisplayName(), "M", "SUCCESSFUL");
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Loan application submitted successfully. Awaiting admin review.", null));
@@ -58,6 +62,9 @@ public class LoanBean implements Serializable {
                 return null;
             }
             loanService.repay(activeLoan.getId(), repayAmount);
+            AuditLogService.log("Loan Repayment",
+                    "UGX " + repayAmount + " for Loan #" + activeLoan.getId(),
+                    loginBean.getCurrentUser().getDisplayName(), "M", "SUCCESSFUL");
             FacesContext.getCurrentInstance().addMessage(null,
                     new FacesMessage(FacesMessage.SEVERITY_INFO,
                             "Repayment of UGX " + repayAmount + " recorded.", null));
