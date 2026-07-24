@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+  <title>My Profile — Kimwanyi SACCO Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <h:outputStylesheet library="css" name="sacco.css"/>
+</h:head>
+<h:body>
+<div class="layout-wrapper">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <h1><h:graphicImage library="images" name="site-icon.png" style="width:28px; height:28px; vertical-align:middle; margin-right:8px;"/> Kimwanyi SACCO</h1>
+      <span class="brand-sub">Admin Panel</span>
+    </div>
+        <div class="sidebar-nav">
+      <h:link outcome="/admin/dashboard.xhtml">
+        <h:graphicImage library="images" name="dashboard_icon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Dashboard
+      </h:link>
+      <h:link outcome="/admin/members.xhtml">
+        <h:graphicImage library="images" name="generic-users-group.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Members
+      </h:link>
+      <h:link outcome="/admin/transactions.xhtml">
+        <h:graphicImage library="images" name="savingsicon.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Transactions
+      </h:link>
+      <h:link outcome="/admin/loans.xhtml">
+        <h:graphicImage library="images" name="generic-user.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> Loans
+      </h:link>
+      <h:link outcome="/admin/system-logs.xhtml">
+        <h:graphicImage library="images" name="system_admin_logo.png" styleClass="nav-icon" style="width:18px; height:18px; margin-right:10px;"/> System Logs
+      </h:link>
+    </div>
+    <div class="sidebar-footer">
+      <h:form>
+        <h:commandLink action="#{loginBean.logout}" styleClass="nav-btn" style="color:#f5c2c2; display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:18px; height:18px; margin-right:10px;"/> Log Out</h:commandLink>
+      </h:form>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main-content">
+    <div class="topbar">
+      <div>
+        <span class="topbar-title">My Profile</span>
+      </div>
+      <div class="topbar-right">
+        <div class="profile-dropdown-wrapper">
+          <button class="profile-btn" onclick="toggleProfileMenu()" type="button">
+            <h:graphicImage library="images" name="generic-user.png" styleClass="profile-avatar" style="width:30px; height:30px; border-radius:50%; object-fit:cover;"/>
+            <span><h:outputText value="#{loginBean.currentUser.displayName}"/></span>
+            <span class="dropdown-arrow">▾</span>
+          </button>
+                    <div class="profile-dropdown" id="profileDropdown">
+            <div class="profile-dropdown-header">
+              <span class="profile-role">System Administrator</span>
+              <span class="profile-role-tag">(Admin)</span>
+            </div>
+            <h:link outcome="/admin/my-profile.xhtml" styleClass="profile-menu-item"><h:graphicImage library="images" name="generic-user.png" style="width:16px; height:16px; vertical-align:middle; margin-right:8px;"/> My Profile</h:link>
+            <h:form styleClass="profile-menu-form">
+              <h:commandLink action="#{loginBean.logout}" styleClass="profile-menu-item sign-out-btn" style="display:flex; align-items:center;"><h:graphicImage library="images" name="logout.png" style="width:16px; height:16px; margin-right:8px;"/> Sign Out</h:commandLink>
+            </h:form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-body">
+      <h:messages layout="table" styleClass="sacco-messages" errorClass="sacco-msg error"
+            infoClass="sacco-msg info" />
+
+      <div class="grid-2">
+        <!-- Account Info -->
+        <div class="card">
+          <div class="card-header"> Account Information</div>
+          <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--text-muted); width:40%;">Display Name</td>
+              <td style="padding:10px 0; font-weight:600;">
+                <h:outputText value="#{adminProfileBean.displayName}"/>
+              </td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 0; color:var(--text-muted);">Username</td>
+              <td style="padding:10px 0; font-weight:600;">
+                <h:outputText value="#{adminProfileBean.username}"/>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:10px 0; color:var(--text-muted);">Role</td>
+              <td style="padding:10px 0;">
+                <span class="badge badge-success">System Administrator</span>
+              </td>
+            </tr>
+          </table>
+          <p class="text-muted mt-4" style="font-size:.78rem;">
+            Username cannot be changed. Contact the system owner if corrections are needed.
+          </p>
+        </div>
+
+        <!-- Change Password -->
+        <div class="card">
+          <div class="card-header"> Change Password</div>
+          <h:form id="pwdForm" prependId="false" pt:autocomplete="off" xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+            <div class="form-group">
+              <h:outputLabel for="curPwd" value="Current Password *"/>
+              <h:inputSecret id="curPwd" value="#{adminProfileBean.currentPassword}"
+                      required="true"
+                      requiredMessage="Enter your current password."
+                      placeholder="Your current password" maxlength="72"
+                      pt:autocomplete="new-password"/>
+              <h:message for="curPwd" styleClass="field-error"/>
+            </div>
+            <div class="form-group">
+              <h:outputLabel for="newPwd" value="New Password *"/>
+              <h:inputSecret id="newPwd" value="#{adminProfileBean.newPassword}"
+                      required="true"
+                      requiredMessage="Enter a new password."
+                      validatorMessage="Password must be at least 8 characters and contain both letters and numbers."
+                      placeholder="Min. 8 characters, letters + numbers" maxlength="72"
+                      pt:autocomplete="new-password">
+                <f:validateRegex pattern="(?=.*[A-Za-z])(?=.*[0-9]).{8,}"/>
+              </h:inputSecret>
+              <h:message for="newPwd" styleClass="field-error"/>
+              <span class="field-hint">At least 8 characters, must include letters and numbers.</span>
+            </div>
+            <div class="form-group">
+              <h:outputLabel for="confirmPwd" value="Confirm New Password *"/>
+              <h:inputSecret id="confirmPwd" value="#{adminProfileBean.confirmNewPassword}"
+                      required="true"
+                      requiredMessage="Please confirm your new password."
+                      placeholder="Repeat new password" maxlength="72"
+                      pt:autocomplete="new-password"/>
+              <h:message for="confirmPwd" styleClass="field-error"/>
+            </div>
+            <h:commandButton id="changePwdBtn" value="Change Password"
+                     action="#{adminProfileBean.changePassword}"
+                     styleClass="btn btn-primary btn-full"/>
+          </h:form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+  function toggleProfileMenu() {
+    var menu = document.getElementById('profileDropdown');
+    menu.classList.toggle('open');
+  }
+  document.addEventListener('click', function(e) {
+    var wrapper = document.querySelector('.profile-dropdown-wrapper');
+    if (wrapper &amp;&amp; !wrapper.contains(e.target)) {
+      var menu = document.getElementById('profileDropdown');
+      if (menu) menu.classList.remove('open');
+    }
+  });
+</script>
+</h:body>
+</html>
