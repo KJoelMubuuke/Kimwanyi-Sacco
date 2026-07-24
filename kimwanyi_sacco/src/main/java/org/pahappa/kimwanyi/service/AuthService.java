@@ -83,7 +83,7 @@ public class AuthService {
         writeLog("Logged Out", displayName, actorType, "SUCCESSFUL", ipAddress);
     }
 
-    // ---- private helpers -------------------------------------------------------
+    // ---- private helpers ------------------
 
     private void writeLog(String action, String actorName, String actorType,
                           String status, String ipAddress) {
